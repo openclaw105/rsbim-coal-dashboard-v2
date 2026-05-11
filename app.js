@@ -246,21 +246,26 @@ function renderSensorMap() {
     const chartDiv = document.getElementById('sensor-map');
     if (!chartDiv) return;
     
+    // 确保容器有明确尺寸
     chartDiv.style.width = '100%';
-    chartDiv.style.height = '300px';
+    chartDiv.style.height = '400px';
     
     const chart = echarts.init(chartDiv);
     chart.setOption({
       title: { text: '传感器分布', left: 'center', textStyle: { color: '#fff', fontSize: 16 } },
       tooltip: { trigger: 'item', backgroundColor: 'rgba(0,0,0,0.8)', textStyle: { color: '#fff' } },
+      grid: { left: '3%', right: '4%', bottom: '3%', top: '60px', containLabel: true },
+      xAxis: { type: 'value', min: 0, max: 100, name: 'X', axisLine: { lineStyle: { color: '#666' } }, axisLabel: { color: '#aaa' }, splitLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } } },
+      yAxis: { type: 'value', min: 0, max: 100, name: 'Y', axisLine: { lineStyle: { color: '#666' } }, axisLabel: { color: '#aaa' }, splitLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } } },
       series: [{
         type: 'scatter',
-        symbolSize: 15,
+        symbolSize: 25,
         data: TANKS.map((tank, i) => ({
           name: tank.name,
-          value: [Math.random() * 100, Math.random() * 100, i]
+          value: [Math.random() * 100, Math.random() * 100]
         })),
-        itemStyle: { color: ['#00d4ff', '#00ff88', '#ffaa00', '#ff6b6b', '#a855f7'] }
+        itemStyle: { color: ['#00d4ff', '#00ff88', '#ffaa00', '#ff6b6b', '#a855f7'] },
+        label: { show: true, formatter: '{b}', color: '#fff', fontSize: 11 }
       }]
     });
     window.sensorMap = chart;
@@ -566,4 +571,7 @@ function init() {
 }
 
 // 页面加载完成后初始化
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', () => {
+  // 延迟初始化，确保容器有正确的尺寸
+  setTimeout(init, 100);
+});
