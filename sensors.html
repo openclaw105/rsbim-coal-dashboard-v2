@@ -1,78 +1,116 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>传感器运维 - RSBIM 储罐监测</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>传感器运维 - RSBIM 储罐监测 v2.0</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="particles" id="particles"></div>
+    <div class="particles" id="particles"></div>
 
-  <nav class="navbar">
-    <div class="navbar-title">
-      <span class="logo">🏭</span>
-      RSBIM 储罐监测
-    </div>
-    <a href="index.html" class="nav-btn">
-      <span class="nav-icon">🏠</span>首页
-    </a>
-    <a href="data.html" class="nav-btn">
-      <span class="nav-icon">📊</span>综合数据
-    </a>
-    <a href="trends.html" class="nav-btn">
-      <span class="nav-icon">📈</span>趋势监测
-    </a>
-    <a href="history.html" class="nav-btn">
-      <span class="nav-icon">📜</span>历史数据
-    </a>
-    <a href="sensors.html" class="nav-btn active">
-      <span class="nav-icon">📡</span>传感器运维
-    </a>
-    <a href="settings.html" class="nav-btn">
-      <span class="nav-icon">⚙️</span>系统设置
-    </a>
-  </nav>
+    <header class="header">
+        <div class="header-left">
+            <h1 class="header-title"><span class="logo">🏭</span>RSBIM 储罐监测</h1>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-btn"><span class="nav-icon">🏠</span>首页</a>
+                <a href="data.html" class="nav-btn"><span class="nav-icon">📊</span>综合数据</a>
+                <a href="trends.html" class="nav-btn"><span class="nav-icon">📈</span>趋势监测</a>
+                <a href="history.html" class="nav-btn"><span class="nav-icon">📜</span>历史数据</a>
+                <a href="sensors.html" class="nav-btn active"><span class="nav-icon">📡</span>传感器运维</a>
+                <a href="settings.html" class="nav-btn"><span class="nav-icon">⚙️</span>系统设置</a>
+            </nav>
+        </div>
+        <div class="header-right">
+            <span class="header-time" id="currentTime"></span>
+            <span class="header-status"><span class="status-dot online"></span>系统运行正常</span>
+        </div>
+    </header>
 
-  <div class="page-container">
-    <div class="card">
-      <h2>📡 传感器运维管理</h2>
-      <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-        <button class="btn btn-primary" onclick="refreshSensors()">刷新</button>
-        <button class="btn" onclick="addSensor()">添加传感器</button>
-        <button class="btn" onclick="exportSensors()">导出列表</button>
-      </div>
-
-      <div class="chart-container" id="sensor-map" style="height: 400px; min-height: 300px;"></div>
+    <div class="stats-bar">
+        <div class="stat-card"><div class="label">储罐总数</div><div class="value">5</div><div class="unit">座</div></div>
+        <div class="stat-card"><div class="label">传感器</div><div class="value">128</div><div class="unit">个</div></div>
+        <div class="stat-card"><div class="label">在线率</div><div class="value">99%</div><div class="unit">%</div></div>
+        <div class="stat-card"><div class="label">应变均值</div><div class="value">12.5</div><div class="unit">με</div></div>
+        <div class="stat-card"><div class="label">倾斜均值</div><div class="value">0.02</div><div class="unit">°</div></div>
+        <div class="stat-card"><div class="label">沉降均值</div><div class="value">8.3</div><div class="unit">mm</div></div>
+        <div class="stat-card"><div class="label">温度均值</div><div class="value">24.8</div><div class="unit">°C</div></div>
+        <div class="stat-card"><div class="label">系统状态</div><div class="value" style="color:var(--accent);font-size:16px;">正常</div><div class="unit">—</div></div>
     </div>
 
-    <div class="card">
-      <h2>📋 传感器列表</h2>
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>传感器编号</th>
-            <th>类型</th>
-            <th>安装位置</th>
-            <th>当前值</th>
-            <th>阈值</th>
-            <th>状态</th>
-            <th>操作</th>
-          </tr>
-        </thead>
-        <tbody id="sensors-table-body">
-          <!-- 数据由 JS 动态加载 -->
-        </tbody>
-      </table>
+    <div class="main-content">
+        <div class="chart-container full-width">
+            <div class="chart-title">📡 传感器运维管理</div>
+            <div style="display:flex;gap:10px;margin-bottom:20px;">
+                <button class="nav-btn" onclick="refreshSensors()">🔄 刷新</button>
+                <button class="nav-btn" onclick="addSensor()">➕ 添加传感器</button>
+                <button class="nav-btn" onclick="exportSensors()">📤 导出列表</button>
+            </div>
+            <div class="chart-box large" id="sensorMap"></div>
+        </div>
+
+        <div class="chart-container full-width">
+            <div class="chart-title">📋 传感器列表</div>
+            <div class="sensor-grid" id="sensorGrid"></div>
+        </div>
     </div>
-  </div>
 
-  <footer class="footer">
-    <span>RSBIM 储罐结构安全智能监测系统 v2.0</span>
-    <span class="blink">● 系统运行正常</span>
-  </footer>
+    <footer class="footer-bar">
+        <div class="info"><span>RSBIM 储罐结构安全智能监测系统 v2.0</span><span>数据更新: <span id="lastUpdate"></span></span></div>
+        <div class="blink">● 系统运行正常</div>
+    </footer>
 
-  <script src="echarts.min.js"></script>
-  <script src="app.js"></script>
+    <script>
+        const TANKS = [{id:'TANK-001',name:'1号储罐'},{id:'TANK-002',name:'2号储罐'},{id:'TANK-003',name:'3号储罐'},{id:'TANK-004',name:'4号储罐'},{id:'TANK-005',name:'5号储罐'}];
+        const COLORS = ['#00d4ff','#00ff88','#ffaa00','#ff4444','#a855f7'];
+        
+        function updateTime() {
+            const el = document.getElementById('currentTime');
+            if (el) el.textContent = new Date().toLocaleTimeString('zh-CN', {hour12:false});
+            const u = document.getElementById('lastUpdate');
+            if (u) u.textContent = new Date().toLocaleTimeString('zh-CN');
+        }
+        updateTime(); setInterval(updateTime, 1000);
+        
+        function renderSensorMap() {
+            const div = document.getElementById('sensorMap'); if (!div) return;
+            const chart = echarts.init(div);
+            chart.setOption({
+                tooltip: {trigger:'item',backgroundColor:'rgba(0,0,0,0.85)',textStyle:{color:'#fff'}},
+                grid: {left:'3%',right:'4%',bottom:'3%',top:'60px',containLabel:true},
+                xAxis: {type:'value',min:0,max:100,name:'X',axisLine:{lineStyle:{color:'#666'}},axisLabel:{color:'#aaa'},splitLine:{lineStyle:{color:'rgba(255,255,255,0.1)'}}},
+                yAxis: {type:'value',min:0,max:100,name:'Y',axisLine:{lineStyle:{color:'#666'}},axisLabel:{color:'#aaa'},splitLine:{lineStyle:{color:'rgba(255,255,255,0.1)'}}},
+                series: [{type:'scatter',symbolSize:25,data:TANKS.map((t,i)=>({name:t.name,value:[Math.random()*100,Math.random()*100]})),itemStyle:{color:COLORS},label:{show:true,formatter:'{b}',color:'#fff',fontSize:11}}]
+            });
+            window.sensorMap = chart;
+        }
+        
+        function renderSensorGrid() {
+            const grid = document.getElementById('sensorGrid'); if (!grid) return;
+            const sensors = [];
+            TANKS.forEach(tank => {
+                ['应变','倾斜','沉降','温度'].forEach((type, i) => {
+                    sensors.push({id:`SN-${tank.id}-${i}`,name:`${tank.name}-${type}`,value:(Math.random()*20+5).toFixed(1),status:'normal'});
+                });
+            });
+            grid.innerHTML = sensors.map(s => `
+                <div class="sensor-card ${s.status}" onclick="showDetail('${s.id}')">
+                    <div class="id">${s.id}</div>
+                    <div class="value">${s.value}</div>
+                    <div class="type">${s.name.split('-')[1]}传感器</div>
+                </div>
+            `).join('');
+        }
+        
+        function showDetail(id) { alert('详情: ' + id); }
+        function refreshSensors() { renderSensorGrid(); }
+        function addSensor() { alert('添加传感器功能待实现'); }
+        function exportSensors() { alert('导出功能待实现'); }
+        
+        renderSensorMap();
+        renderSensorGrid();
+        window.addEventListener('resize', () => window.sensorMap && window.sensorMap.resize());
+    </script>
 </body>
 </html>

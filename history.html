@@ -1,91 +1,108 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>历史数据 - RSBIM 储罐监测</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>历史数据 - RSBIM 储罐监测 v2.0</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="particles" id="particles"></div>
+    <div class="particles" id="particles"></div>
 
-  <nav class="navbar">
-    <div class="navbar-title">
-      <span class="logo">🏭</span>
-      RSBIM 储罐监测
-    </div>
-    <a href="index.html" class="nav-btn">
-      <span class="nav-icon">🏠</span>首页
-    </a>
-    <a href="data.html" class="nav-btn">
-      <span class="nav-icon">📊</span>综合数据
-    </a>
-    <a href="trends.html" class="nav-btn">
-      <span class="nav-icon">📈</span>趋势监测
-    </a>
-    <a href="history.html" class="nav-btn active">
-      <span class="nav-icon">📜</span>历史数据
-    </a>
-    <a href="sensors.html" class="nav-btn">
-      <span class="nav-icon">📡</span>传感器运维
-    </a>
-    <a href="settings.html" class="nav-btn">
-      <span class="nav-icon">⚙️</span>系统设置
-    </a>
-  </nav>
+    <header class="header">
+        <div class="header-left">
+            <h1 class="header-title"><span class="logo">🏭</span>RSBIM 储罐监测</h1>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-btn"><span class="nav-icon">🏠</span>首页</a>
+                <a href="data.html" class="nav-btn"><span class="nav-icon">📊</span>综合数据</a>
+                <a href="trends.html" class="nav-btn"><span class="nav-icon">📈</span>趋势监测</a>
+                <a href="history.html" class="nav-btn active"><span class="nav-icon">📜</span>历史数据</a>
+                <a href="sensors.html" class="nav-btn"><span class="nav-icon">📡</span>传感器运维</a>
+                <a href="settings.html" class="nav-btn"><span class="nav-icon">⚙️</span>系统设置</a>
+            </nav>
+        </div>
+        <div class="header-right">
+            <span class="header-time" id="currentTime"></span>
+            <span class="header-status"><span class="status-dot online"></span>系统运行正常</span>
+        </div>
+    </header>
 
-  <div class="page-container">
-    <div class="card">
-      <h2>📜 历史数据查询</h2>
-      <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-        <select class="btn" id="tank-select">
-          <option value="all">全部储罐</option>
-          <option value="TANK-001">TANK-001</option>
-          <option value="TANK-002">TANK-002</option>
-          <option value="TANK-003">TANK-003</option>
-          <option value="TANK-004">TANK-004</option>
-          <option value="TANK-005">TANK-005</option>
-        </select>
-        <select class="btn" id="sensor-type-select">
-          <option value="all">全部传感器类型</option>
-          <option value="strain">应变传感器</option>
-          <option value="tilt">倾斜传感器</option>
-          <option value="settlement">沉降传感器</option>
-          <option value="temperature">温度传感器</option>
-        </select>
-        <button class="btn btn-primary" onclick="queryHistory()">查询</button>
-        <button class="btn" onclick="exportData()">导出</button>
-      </div>
-
-      <div class="chart-container" id="history-chart"></div>
+    <div class="stats-bar">
+        <div class="stat-card"><div class="label">储罐总数</div><div class="value">5</div><div class="unit">座</div></div>
+        <div class="stat-card"><div class="label">传感器</div><div class="value">128</div><div class="unit">个</div></div>
+        <div class="stat-card"><div class="label">在线率</div><div class="value">99%</div><div class="unit">%</div></div>
+        <div class="stat-card"><div class="label">应变均值</div><div class="value">12.5</div><div class="unit">με</div></div>
+        <div class="stat-card"><div class="label">倾斜均值</div><div class="value">0.02</div><div class="unit">°</div></div>
+        <div class="stat-card"><div class="label">沉降均值</div><div class="value">8.3</div><div class="unit">mm</div></div>
+        <div class="stat-card"><div class="label">温度均值</div><div class="value">24.8</div><div class="unit">°C</div></div>
+        <div class="stat-card"><div class="label">系统状态</div><div class="value" style="color:var(--accent);font-size:16px;">正常</div><div class="unit">—</div></div>
     </div>
 
-    <div class="card">
-      <h2>📋 历史数据记录</h2>
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>时间</th>
-            <th>储罐</th>
-            <th>传感器类型</th>
-            <th>数值</th>
-            <th>单位</th>
-            <th>状态</th>
-          </tr>
-        </thead>
-        <tbody id="history-table-body">
-          <!-- 数据由 JS 动态加载 -->
-        </tbody>
-      </table>
+    <div class="main-content">
+        <div class="chart-container full-width">
+            <div class="chart-title">📜 历史数据查询</div>
+            <div style="display:flex;gap:10px;margin-bottom:20px;">
+                <select class="nav-btn" id="tankSelect"><option value="all">全部储罐</option><option>TANK-001</option><option>TANK-002</option><option>TANK-003</option><option>TANK-004</option><option>TANK-005</option></select>
+                <select class="nav-btn" id="typeSelect"><option value="all">全部类型</option><option>应变传感器</option><option>倾斜传感器</option><option>沉降传感器</option><option>温度传感器</option></select>
+                <button class="nav-btn" onclick="queryHistory()">查询</button>
+                <button class="nav-btn" onclick="exportData()">导出</button>
+            </div>
+            <div class="chart-box large" id="historyChart"></div>
+        </div>
+
+        <div class="chart-container full-width">
+            <div class="chart-title">📋 历史数据记录</div>
+            <div class="alert-scroll-wrap">
+                <table class="alert-table">
+                    <thead><tr><th>时间</th><th>储罐</th><th>传感器类型</th><th>数值</th><th>单位</th><th>状态</th></tr></thead>
+                    <tbody id="historyTable"></tbody>
+                </table>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <footer class="footer">
-    <span>RSBIM 储罐结构安全智能监测系统 v2.0</span>
-    <span class="blink">● 系统运行正常</span>
-  </footer>
+    <footer class="footer-bar">
+        <div class="info"><span>RSBIM 储罐结构安全智能监测系统 v2.0</span><span>数据更新: <span id="lastUpdate"></span></span></div>
+        <div class="blink">● 系统运行正常</div>
+    </footer>
 
-  <script src="echarts.min.js"></script>
-  <script src="app.js"></script>
+    <script>
+        function updateTime() {
+            const el = document.getElementById('currentTime');
+            if (el) el.textContent = new Date().toLocaleTimeString('zh-CN', {hour12:false});
+            const u = document.getElementById('lastUpdate');
+            if (u) u.textContent = new Date().toLocaleTimeString('zh-CN');
+        }
+        updateTime(); setInterval(updateTime, 1000);
+        
+        function queryHistory() {
+            const tbody = document.getElementById('historyTable');
+            if (!tbody) return;
+            const data = Array.from({length:20}, (_, i) => {
+                const time = new Date(Date.now() - i*3600000);
+                return `<tr><td>${time.toLocaleString('zh-CN')}</td><td>TANK-00${Math.floor(Math.random()*5)+1}</td><td>应变传感器</td><td>${(Math.random()*30+10).toFixed(2)}</td><td>με</td><td><span class="status-indicator status-normal">正常</span></td></tr>`;
+            }).join('');
+            tbody.innerHTML = data;
+            
+            const chartDiv = document.getElementById('historyChart');
+            if (chartDiv) {
+                const chart = echarts.init(chartDiv);
+                chart.setOption({
+                    tooltip: {trigger:'axis',backgroundColor:'rgba(0,0,0,0.85)',textStyle:{color:'#fff'}},
+                    grid: {left:'3%',right:'4%',bottom:'3%',top:'60px',containLabel:true},
+                    xAxis: {type:'category',data:Array.from({length:20},(_,i)=>new Date(Date.now()-i*3600000).toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})),axisLine:{lineStyle:{color:'#666'}},axisLabel:{color:'#aaa'}},
+                    yAxis: {type:'value',axisLine:{lineStyle:{color:'#666'}},axisLabel:{color:'#aaa'},splitLine:{lineStyle:{color:'rgba(255,255,255,0.1)'}}},
+                    series: [{type:'line',smooth:true,data:Array.from({length:20},()=>Math.random()*30+10),itemStyle:{color:'#00d4ff'},areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'#00d4ff80'},{offset:1,color:'#00d4ff00'}])}}]
+                });
+                window.historyChart = chart;
+            }
+        }
+        
+        function exportData() { alert('导出功能待实现'); }
+        
+        queryHistory();
+        window.addEventListener('resize', () => window.historyChart && window.historyChart.resize());
+    </script>
 </body>
 </html>

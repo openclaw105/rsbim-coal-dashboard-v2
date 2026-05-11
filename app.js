@@ -1,6 +1,5 @@
 /**
- * RSBIM 储罐监测平台 - 应用逻辑
- * v2.0 - 修复审查问题
+ * RSBIM 储罐监测平台 v2.0 - 科幻版应用逻辑
  */
 
 // 配置常量
@@ -11,7 +10,7 @@ const CONFIG = {
   historyDays: 365
 };
 
-// 储罐数据（可替换为 API 调用）
+// 储罐数据
 const TANKS = [
   { id: 'TANK-001', name: '1号储罐', type: '原油储罐', capacity: 10000 },
   { id: 'TANK-002', name: '2号储罐', type: '成品油罐', capacity: 5000 },
@@ -28,65 +27,63 @@ const SENSOR_TYPES = {
   temperature: { name: '温度传感器', unit: '°C', icon: '🌡️' }
 };
 
-/**
- * 获取传感器状态
- * @param {number} value - 传感器数值
- * @returns {string} 状态：normal | warning | danger
- */
+// 颜色方案
+const COLORS = {
+  primary: '#00d4ff',
+  accent: '#00ff88',
+  warning: '#ffaa00',
+  danger: '#ff4444',
+  purple: '#a855f7',
+  yellow: '#ffd700'
+};
+
+// 生成粒子背景
+function createParticles() {
+  const container = document.getElementById('particles');
+  if (!container) return;
+  
+  for (let i = 0; i < 100; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'particle';
+    particle.style.left = Math.random() * 100 + '%';
+    particle.style.animationDelay = Math.random() * 15 + 's';
+    particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+    container.appendChild(particle);
+  }
+}
+
+// 更新时间显示
+function updateTime() {
+  const timeEl = document.getElementById('currentTime');
+  const updateEl = document.getElementById('lastUpdate');
+  if (timeEl) {
+    timeEl.textContent = new Date().toLocaleTimeString('zh-CN', { hour12: false });
+  }
+  if (updateEl) {
+    updateEl.textContent = new Date().toLocaleTimeString('zh-CN');
+  }
+}
+
+// 获取传感器状态
 function getSensorStatus(value) {
   try {
-    if (value > CONFIG.dangerThreshold) {
-      return 'danger';
-    } else if (value > CONFIG.warningThreshold) {
-      return 'warning';
-    }
+    if (value > CONFIG.dangerThreshold) return 'danger';
+    if (value > CONFIG.warningThreshold) return 'warning';
     return 'normal';
   } catch (e) {
-    console.error('getSensorStatus error:', e);
     return 'normal';
   }
 }
 
-/**
- * 获取状态样式类名
- * @param {string} status - 状态
- * @returns {string} CSS 类名
- */
-function getStatusClass(status) {
-  const classes = {
-    normal: 'status-normal',
-    warning: 'status-warning',
-    danger: 'status-danger'
-  };
-  return classes[status] || classes.normal;
-}
-
-/**
- * 获取状态显示文本
- * @param {string} status - 状态
- * @returns {string} 显示文本
- */
-function getStatusText(status) {
-  const texts = {
-    normal: '正常',
-    warning: '警告',
-    danger: '危险'
-  };
-  return texts[status] || '未知';
-}
-
-/**
- * 模拟传感器数据
- * @returns {Array} 传感器数据数组
- */
+// 生成传感器数据
 function generateSensorData() {
   const sensors = [];
   TANKS.forEach(tank => {
     Object.keys(SENSOR_TYPES).forEach(type => {
       const baseValue = {
-        strain: Math.random() * 20,
-        tilt: Math.random() * 0.1,
-        settlement: Math.random() * 30,
+        strain: Math.random() * 20 + 5,
+        tilt: Math.random() * 0.05 + 0.01,
+        settlement: Math.random() * 20 + 5,
         temperature: 20 + Math.random() * 10
       }[type];
       
@@ -106,472 +103,239 @@ function generateSensorData() {
   return sensors;
 }
 
-/**
- * 渲染传感器表格
- */
-function renderSensorsTable() {
-  try {
-    const tbody = document.getElementById('sensors-table-body');
-    if (!tbody) return;
-    
-    const sensors = generateSensorData();
-    tbody.innerHTML = sensors.map(s => `
-      <tr>
-        <td>${s.id}</td>
-        <td>${s.typeName}</td>
-        <td>${s.tankName}</td>
-        <td>${s.value}</td>
-        <td>${s.type === 'temperature' ? '25-30' : '0-100'}</td>
-        <td><span class="status-indicator ${getStatusClass(s.status)}">${getStatusText(s.status)}</span></td>
-        <td>
-          <button class="btn" onclick="viewSensor('${s.id}')" style="padding: 4px 8px; font-size: 11px;">详情</button>
-        </td>
-      </tr>
-    `).join('');
-  } catch (e) {
-    console.error('renderSensorsTable error:', e);
-  }
+// 渲染传感器网格
+function renderSensorGrid() {
+  const grid = document.getElementById('sensorGrid');
+  if (!grid) return;
+  
+  const sensors = generateSensorData();
+  grid.innerHTML = sensors.map(s => `
+    <div class="sensor-card ${s.status}" onclick="showSensorDetail('${s.id}')">
+      <div class="id">${s.id}</div>
+      <div class="value">${s.value}</div>
+      <div class="type">${s.typeName}</div>
+    </div>
+  `).join('');
 }
 
-/**
- * 渲染应变趋势图表
- */
+// 渲染应变图表
 function renderStrainChart() {
-  try {
-    const chartDiv = document.getElementById('strain-chart');
-    if (!chartDiv) return;
-    
-    chartDiv.style.width = '100%';
-    chartDiv.style.height = '450px';
-    
-    const chart = echarts.init(chartDiv);
-    chart.setOption({
-      title: { text: '应变趋势监测', left: 'center', textStyle: { color: '#fff', fontSize: 16 } },
-      tooltip: { trigger: 'axis', backgroundColor: 'rgba(0,0,0,0.8)', textStyle: { color: '#fff' } },
-      legend: { data: TANKS.map(t => t.name), top: 30, textStyle: { color: '#fff' } },
-      grid: { left: '3%', right: '4%', bottom: '3%', top: '80px', containLabel: true },
-      xAxis: { type: 'category', boundaryGap: false, data: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'], axisLine: { lineStyle: { color: '#666' } }, axisLabel: { color: '#aaa' } },
-      yAxis: { type: 'value', name: 'με', max: 100, axisLine: { lineStyle: { color: '#666' } }, axisLabel: { color: '#aaa' }, splitLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } } },
-      series: TANKS.map((tank, i) => ({
-        name: tank.name,
-        type: 'line',
-        smooth: true,
-        data: Array.from({length: 7}, () => Math.random() * 20 + 5),
-        lineStyle: { width: 2 },
-        itemStyle: { color: ['#00d4ff', '#00ff88', '#ffaa00', '#ff6b6b', '#a855f7'][i] }
-      }))
-    });
-    window.strainChart = chart;
-    console.log('应变图表渲染完成');
-  } catch (e) {
-    console.error('renderStrainChart error:', e);
-  }
+  const chartDiv = document.getElementById('strainChart');
+  if (!chartDiv) return;
+  
+  const chart = echarts.init(chartDiv);
+  const colors = [COLORS.primary, COLORS.accent, COLORS.warning, COLORS.danger, COLORS.purple];
+  
+  chart.setOption({
+    tooltip: {
+      trigger: 'axis',
+      backgroundColor: 'rgba(0,0,0,0.85)',
+      borderColor: COLORS.primary,
+      textStyle: { color: '#fff' }
+    },
+    legend: {
+      data: TANKS.map(t => t.name),
+      top: 30,
+      textStyle: { color: '#fff' }
+    },
+    grid: { left: '3%', right: '4%', bottom: '3%', top: '80px', containLabel: true },
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'],
+      axisLine: { lineStyle: { color: '#666' } },
+      axisLabel: { color: '#aaa' }
+    },
+    yAxis: {
+      type: 'value',
+      name: 'με',
+      max: 100,
+      axisLine: { lineStyle: { color: '#666' } },
+      axisLabel: { color: '#aaa' },
+      splitLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } }
+    },
+    series: TANKS.map((tank, i) => ({
+      name: tank.name,
+      type: 'line',
+      smooth: true,
+      symbol: 'circle',
+      symbolSize: 8,
+      data: Array.from({length: 7}, () => Math.random() * 30 + 10),
+      lineStyle: { width: 2 },
+      itemStyle: { color: colors[i] },
+      areaStyle: {
+        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          { offset: 0, color: colors[i] + '66' },
+          { offset: 1, color: colors[i] + '00' }
+        ])
+      }
+    }))
+  });
+  
+  window.strainChart = chart;
 }
 
-/**
- * 渲染倾斜趋势图表
- */
-function renderTiltChart() {
-  try {
-    const chartDiv = document.getElementById('tilt-chart');
-    if (!chartDiv) return;
-    
-    chartDiv.style.width = '100%';
-    chartDiv.style.height = '450px';
-    
-    const chart = echarts.init(chartDiv);
-    chart.setOption({
-      title: { text: '倾斜趋势监测', left: 'center', textStyle: { color: '#fff', fontSize: 16 } },
-      tooltip: { trigger: 'axis', backgroundColor: 'rgba(0,0,0,0.8)', textStyle: { color: '#fff' } },
-      legend: { data: TANKS.map(t => t.name), top: 30, textStyle: { color: '#fff' } },
-      grid: { left: '3%', right: '4%', bottom: '3%', top: '80px', containLabel: true },
-      xAxis: { type: 'category', boundaryGap: false, data: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'], axisLine: { lineStyle: { color: '#666' } }, axisLabel: { color: '#aaa' } },
-      yAxis: { type: 'value', name: '°', max: 0.5, axisLine: { lineStyle: { color: '#666' } }, axisLabel: { color: '#aaa' }, splitLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } } },
-      series: TANKS.map((tank, i) => ({
-        name: tank.name,
-        type: 'line',
-        smooth: true,
-        data: Array.from({length: 7}, () => Math.random() * 0.05 + 0.01),
-        lineStyle: { width: 2 },
-        itemStyle: { color: ['#00d4ff', '#00ff88', '#ffaa00', '#ff6b6b', '#a855f7'][i] }
-      }))
-    });
-    window.tiltChart = chart;
-    console.log('倾斜图表渲染完成');
-  } catch (e) {
-    console.error('renderTiltChart error:', e);
-  }
-}
-
-/**
- * 渲染温度趋势图表
- */
-function renderTempChart() {
-  try {
-    const chartDiv = document.getElementById('temp-chart');
-    if (!chartDiv) return;
-    
-    chartDiv.style.width = '100%';
-    chartDiv.style.height = '450px';
-    
-    const chart = echarts.init(chartDiv);
-    chart.setOption({
-      title: { text: '温度趋势监测', left: 'center', textStyle: { color: '#fff', fontSize: 16 } },
-      tooltip: { trigger: 'axis', backgroundColor: 'rgba(0,0,0,0.8)', textStyle: { color: '#fff' } },
-      legend: { data: TANKS.map(t => t.name), top: 30, textStyle: { color: '#fff' } },
-      grid: { left: '3%', right: '4%', bottom: '3%', top: '80px', containLabel: true },
-      xAxis: { type: 'category', boundaryGap: false, data: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'], axisLine: { lineStyle: { color: '#666' } }, axisLabel: { color: '#aaa' } },
-      yAxis: { type: 'value', name: '°C', axisLine: { lineStyle: { color: '#666' } }, axisLabel: { color: '#aaa' }, splitLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } } },
-      series: TANKS.map((tank, i) => ({
-        name: tank.name,
-        type: 'line',
-        smooth: true,
-        data: Array.from({length: 7}, () => Math.random() * 10 + 20),
-        lineStyle: { width: 2 },
-        itemStyle: { color: ['#00d4ff', '#00ff88', '#ffaa00', '#ff6b6b', '#a855f7'][i] }
-      }))
-    });
-    window.tempChart = chart;
-    console.log('温度图表渲染完成');
-  } catch (e) {
-    console.error('renderTempChart error:', e);
-  }
-}
-
-/**
- * 渲染传感器分布地图
- */
-function renderSensorMap() {
-  try {
-    const chartDiv = document.getElementById('sensor-map');
-    if (!chartDiv) return;
-    
-    // 确保容器有明确尺寸
-    chartDiv.style.width = '100%';
-    chartDiv.style.height = '400px';
-    
-    const chart = echarts.init(chartDiv);
-    chart.setOption({
-      title: { text: '传感器分布', left: 'center', textStyle: { color: '#fff', fontSize: 16 } },
-      tooltip: { trigger: 'item', backgroundColor: 'rgba(0,0,0,0.8)', textStyle: { color: '#fff' } },
-      grid: { left: '3%', right: '4%', bottom: '3%', top: '60px', containLabel: true },
-      xAxis: { type: 'value', min: 0, max: 100, name: 'X', axisLine: { lineStyle: { color: '#666' } }, axisLabel: { color: '#aaa' }, splitLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } } },
-      yAxis: { type: 'value', min: 0, max: 100, name: 'Y', axisLine: { lineStyle: { color: '#666' } }, axisLabel: { color: '#aaa' }, splitLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } } },
-      series: [{
-        type: 'scatter',
-        symbolSize: 25,
-        data: TANKS.map((tank, i) => ({
-          name: tank.name,
-          value: [Math.random() * 100, Math.random() * 100]
-        })),
-        itemStyle: { color: ['#00d4ff', '#00ff88', '#ffaa00', '#ff6b6b', '#a855f7'] },
-        label: { show: true, formatter: '{b}', color: '#fff', fontSize: 11 }
-      }]
-    });
-    window.sensorMap = chart;
-    console.log('传感器地图渲染完成');
-  } catch (e) {
-    console.error('renderSensorMap error:', e);
-  }
-}
-
-/**
- * 渲染实时图表
- */
-function renderRealtimeChart() {
-  try {
-    const chartDiv = document.getElementById('realtime-chart');
-    if (!chartDiv) return;
-    
-    // 确保容器有明确尺寸
-    chartDiv.style.width = '100%';
-    chartDiv.style.height = '450px';
-    
-    const chart = echarts.init(chartDiv);
-    
-    const option = {
-      title: { text: '实时应变监测', left: 'center', textStyle: { color: '#fff', fontSize: 16 } },
-      tooltip: { trigger: 'axis', backgroundColor: 'rgba(0,0,0,0.8)', textStyle: { color: '#fff' } },
-      legend: {
-        data: TANKS.map(t => t.name),
-        top: 30,
-        textStyle: { color: '#fff' }
-      },
-      grid: { left: '3%', right: '4%', bottom: '3%', top: '80px', containLabel: true },
-      xAxis: {
-        type: 'category',
-        boundaryGap: false,
-        data: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'],
-        axisLine: { lineStyle: { color: '#666' } },
-        axisLabel: { color: '#aaa' }
-      },
-      yAxis: {
-        type: 'value',
-        name: 'με',
-        max: 100,
-        axisLine: { lineStyle: { color: '#666' } },
-        axisLabel: { color: '#aaa' },
-        splitLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } }
-      },
-      series: TANKS.map((tank, i) => ({
-        name: tank.name,
-        type: 'line',
-        smooth: true,
-        data: Array.from({length: 7}, () => Math.random() * 30 + 10),
-        lineStyle: { width: 2 },
-        itemStyle: {
-          color: ['#00d4ff', '#00ff88', '#ffaa00', '#ff6b6b', '#a855f7'][i]
-        },
-        areaStyle: {
-          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-            { offset: 0, color: ['#00d4ff', '#00ff88', '#ffaa00', '#ff6b6b', '#a855f7'][i] + '80' },
-            { offset: 1, color: ['#00d4ff', '#00ff88', '#ffaa00', '#ff6b6b', '#a855f7'][i] + '00' }
-          ])
-        }
-      }))
-    };
-    
-    chart.setOption(option);
-    window.realtimeChart = chart;
-    console.log('实时图表渲染完成');
-  } catch (e) {
-    console.error('renderRealtimeChart error:', e);
-  }
-}
-
-/**
- * 渲染数据表格图表
- */
+// 渲染数据对比图表
 function renderDataChart() {
-  try {
-    const chartDiv = document.getElementById('data-chart');
-    if (!chartDiv) return;
-    
-    chartDiv.style.width = '100%';
-    chartDiv.style.height = '450px';
-    
-    const chart = echarts.init(chartDiv);
-    
-    const option = {
-      title: { text: '储罐数据对比', left: 'center', textStyle: { color: '#fff', fontSize: 16 } },
-      tooltip: { trigger: 'axis', backgroundColor: 'rgba(0,0,0,0.8)', textStyle: { color: '#fff' } },
-      legend: {
-        data: ['应变', '倾斜', '沉降'],
-        top: 30,
-        textStyle: { color: '#fff' }
+  const chartDiv = document.getElementById('dataChart');
+  if (!chartDiv) return;
+  
+  const chart = echarts.init(chartDiv);
+  
+  chart.setOption({
+    tooltip: {
+      trigger: 'axis',
+      backgroundColor: 'rgba(0,0,0,0.85)',
+      borderColor: COLORS.primary,
+      textStyle: { color: '#fff' }
+    },
+    legend: {
+      data: ['应变', '倾斜', '沉降'],
+      top: 30,
+      textStyle: { color: '#fff' }
+    },
+    grid: { left: '3%', right: '4%', bottom: '3%', top: '80px', containLabel: true },
+    xAxis: {
+      type: 'category',
+      data: TANKS.map(t => t.name),
+      axisLine: { lineStyle: { color: '#666' } },
+      axisLabel: { color: '#aaa' }
+    },
+    yAxis: [
+      { type: 'value', name: 'με', position: 'left', axisLine: { lineStyle: { color: '#666' } }, axisLabel: { color: '#aaa' }, splitLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } } },
+      { type: 'value', name: 'mm', position: 'right', axisLine: { lineStyle: { color: '#666' } }, axisLabel: { color: '#aaa' }, splitLine: { show: false } }
+    ],
+    series: [
+      { name: '应变', type: 'bar', data: TANKS.map(() => Math.random() * 20 + 10), itemStyle: { color: COLORS.primary } },
+      { name: '倾斜', type: 'line', yAxisIndex: 0, data: TANKS.map(() => Math.random() * 0.05 + 0.01), itemStyle: { color: COLORS.accent } },
+      { name: '沉降', type: 'line', yAxisIndex: 1, data: TANKS.map(() => Math.random() * 20 + 5), itemStyle: { color: COLORS.warning } }
+    ]
+  });
+  
+  window.dataChart = chart;
+}
+
+// 渲染传感器状态分布
+function renderSensorChart() {
+  const chartDiv = document.getElementById('sensorChart');
+  if (!chartDiv) return;
+  
+  const chart = echarts.init(chartDiv);
+  
+  const normalCount = Math.floor(Math.random() * 10 + 100);
+  const warningCount = Math.floor(Math.random() * 5);
+  const dangerCount = 0;
+  
+  chart.setOption({
+    tooltip: {
+      trigger: 'item',
+      backgroundColor: 'rgba(0,0,0,0.85)',
+      borderColor: COLORS.primary,
+      textStyle: { color: '#fff' }
+    },
+    legend: {
+      top: 'bottom',
+      textStyle: { color: '#fff' }
+    },
+    series: [{
+      type: 'pie',
+      radius: ['40%', '70%'],
+      center: ['50%', '45%'],
+      avoidLabelOverlap: false,
+      itemStyle: {
+        borderRadius: 5,
+        borderColor: '#0a0e27',
+        borderWidth: 2
       },
-      grid: { left: '3%', right: '4%', bottom: '3%', top: '80px', containLabel: true },
-      xAxis: {
-        type: 'category',
-        data: TANKS.map(t => t.name),
-        axisLine: { lineStyle: { color: '#666' } },
-        axisLabel: { color: '#aaa' }
+      label: { show: false },
+      emphasis: {
+        label: { show: true, fontSize: 14, fontWeight: 'bold', color: '#fff' }
       },
-      yAxis: [
-        { type: 'value', name: 'με', position: 'left', axisLine: { lineStyle: { color: '#666' } }, axisLabel: { color: '#aaa' }, splitLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } } },
-        { type: 'value', name: 'mm', position: 'right', axisLine: { lineStyle: { color: '#666' } }, axisLabel: { color: '#aaa' }, splitLine: { show: false } }
-      ],
-      series: [
-        { name: '应变', type: 'bar', data: TANKS.map(() => Math.random() * 20 + 10), itemStyle: { color: '#00d4ff' } },
-        { name: '倾斜', type: 'line', yAxisIndex: 0, data: TANKS.map(() => Math.random() * 0.05 + 0.01), itemStyle: { color: '#00ff88' } },
-        { name: '沉降', type: 'line', yAxisIndex: 1, data: TANKS.map(() => Math.random() * 20 + 5), itemStyle: { color: '#ffaa00' } }
+      data: [
+        { value: normalCount, name: '正常', itemStyle: { color: COLORS.accent } },
+        { value: warningCount, name: '警告', itemStyle: { color: COLORS.warning } },
+        { value: dangerCount, name: '危险', itemStyle: { color: COLORS.danger } }
       ]
-    };
-    
-    chart.setOption(option);
-    window.dataChart = chart;
-    console.log('数据图表渲染完成');
-  } catch (e) {
-    console.error('renderDataChart error:', e);
-  }
+    }]
+  });
+  
+  window.sensorChart = chart;
 }
 
-/**
- * 查询历史数据
- */
-function queryHistory() {
-  try {
-    const tankSelect = document.getElementById('tank-select');
-    const sensorTypeSelect = document.getElementById('sensor-type-select');
-    const tbody = document.getElementById('history-table-body');
-    
-    if (!tbody) return;
-    
-    const tankId = tankSelect?.value || 'all';
-    const sensorType = sensorTypeSelect?.value || 'all';
-    
-    // 模拟历史数据
-    const historyData = [];
-    const now = new Date();
-    
-    for (let i = 0; i < 20; i++) {
-      const time = new Date(now.getTime() - i * 3600000);
-      historyData.push({
-        time: time.toLocaleString('zh-CN'),
-        tank: TANKS[Math.floor(Math.random() * TANKS.length)].name,
-        type: Object.keys(SENSOR_TYPES)[Math.floor(Math.random() * 4)],
-        value: (Math.random() * 30 + 10).toFixed(2),
-        unit: 'με',
-        status: 'normal'
-      });
-    }
-    
-    tbody.innerHTML = historyData.map(d => `
-      <tr>
-        <td>${d.time}</td>
-        <td>${d.tank}</td>
-        <td>${SENSOR_TYPES[d.type]?.name || d.type}</td>
-        <td>${d.value}</td>
-        <td>${d.unit}</td>
-        <td><span class="status-indicator status-normal">${d.status}</span></td>
-      </tr>
+// 显示模态框
+function showModal(type) {
+  const modal = document.getElementById('modal');
+  const title = document.getElementById('modalTitle');
+  const info = document.getElementById('modalInfo');
+  
+  if (type === 'tank-detail') {
+    title.textContent = '储罐详情';
+    info.innerHTML = TANKS.map(t => `
+      <div style="margin-bottom:10px;padding:10px;background:rgba(0,212,255,0.1);border-radius:5px;">
+        <strong style="color:${COLORS.primary}">${t.name}</strong> - ${t.type}<br>
+        容量: ${t.capacity.toLocaleString()} m³
+      </div>
     `).join('');
-    
-    // 渲染图表
-    const chartDiv = document.getElementById('history-chart');
-    if (chartDiv) {
-      chartDiv.style.width = '100%';
-      chartDiv.style.height = '450px';
-      
-      const chart = echarts.init(chartDiv);
-      chart.setOption({
-        title: { text: '历史数据趋势', left: 'center', textStyle: { color: '#fff', fontSize: 16 } },
-        tooltip: { trigger: 'axis', backgroundColor: 'rgba(0,0,0,0.8)', textStyle: { color: '#fff' } },
-        grid: { left: '3%', right: '4%', bottom: '3%', top: '60px', containLabel: true },
-        xAxis: {
-          type: 'category',
-          data: historyData.map(d => d.time.split(' ')[1]),
-          axisLine: { lineStyle: { color: '#666' } },
-          axisLabel: { color: '#aaa' }
-        },
-        yAxis: { type: 'value', axisLine: { lineStyle: { color: '#666' } }, axisLabel: { color: '#aaa' }, splitLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } } },
-        series: [{
-          type: 'line',
-          smooth: true,
-          data: historyData.map(d => parseFloat(d.value)),
-          itemStyle: { color: '#00d4ff' },
-          areaStyle: {
-            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-              { offset: 0, color: '#00d4ff80' },
-              { offset: 1, color: '#00d4ff00' }
-            ])
-          }
-        }]
-      });
-      window.historyChart = chart;
-      console.log('历史图表渲染完成');
-    }
-  } catch (e) {
-    console.error('queryHistory error:', e);
   }
+  
+  modal.classList.add('active');
 }
 
-/**
- * 刷新传感器
- */
-function refreshSensors() {
-  renderSensorsTable();
+// 关闭模态框
+function closeModal() {
+  document.getElementById('modal').classList.remove('active');
 }
 
-/**
- * 查看传感器详情
- */
-function viewSensor(sensorId) {
-  alert(`查看传感器详情: ${sensorId}\n功能待实现`);
-}
-
-/**
- * 添加传感器
- */
-function addSensor() {
-  alert('添加传感器功能待实现');
-}
-
-/**
- * 导出传感器列表
- */
-function exportSensors() {
-  alert('导出功能待实现');
-}
-
-/**
- * 保存阈值设置
- */
-function saveThresholds() {
-  alert('阈值设置已保存');
-}
-
-/**
- * 保存数据采集配置
- */
-function saveDataConfig() {
-  alert('数据采集配置已保存');
-}
-
-/**
- * 保存通知设置
- */
-function saveNotification() {
-  alert('通知设置已保存');
-}
-
-/**
- * 导出历史数据
- */
-function exportData() {
-  alert('导出功能待实现');
-}
-
-/**
- * 初始化
- */
-function init() {
-  try {
-    // 渲染图表
-    if (document.getElementById('realtime-chart')) {
-      renderRealtimeChart();
-    }
-    if (document.getElementById('data-chart')) {
-      renderDataChart();
-    }
-    if (document.getElementById('strain-chart')) {
-      renderStrainChart();
-    }
-    if (document.getElementById('tilt-chart')) {
-      renderTiltChart();
-    }
-    if (document.getElementById('temp-chart')) {
-      renderTempChart();
-    }
-    if (document.getElementById('sensors-table-body')) {
-      renderSensorsTable();
-    }
-    if (document.getElementById('history-table-body')) {
-      queryHistory();
-    }
-    if (document.getElementById('sensor-map')) {
-      renderSensorMap();
-    }
-    
-    // 窗口大小变化时重绘图表
-    window.addEventListener('resize', () => {
-      if (window.realtimeChart) window.realtimeChart.resize();
-      if (window.dataChart) window.dataChart.resize();
-      if (window.historyChart) window.historyChart.resize();
-      if (window.strainChart) window.strainChart.resize();
-      if (window.tiltChart) window.tiltChart.resize();
-      if (window.tempChart) window.tempChart.resize();
-      if (window.sensorMap) window.sensorMap.resize();
+// 显示传感器详情
+function showSensorDetail(sensorId) {
+  showModal('sensor-detail');
+  document.getElementById('modalTitle').textContent = '传感器详情';
+  document.getElementById('modalInfo').innerHTML = `
+    <div style="margin-bottom:10px;">
+      <strong style="color:${COLORS.primary}">${sensorId}</strong>
+    </div>
+    <div>状态: <span style="color:${COLORS.accent}">正常</span></div>
+    <div>最后更新: ${new Date().toLocaleString()}</div>
+  `;
+  
+  // 渲染模态框图表
+  const modalChart = document.getElementById('modalChart');
+  if (modalChart) {
+    const chart = echarts.init(modalChart);
+    chart.setOption({
+      tooltip: { trigger: 'axis', backgroundColor: 'rgba(0,0,0,0.85)', textStyle: { color: '#fff' } },
+      xAxis: { type: 'category', data: ['1h', '2h', '3h', '4h', '5h', '6h'], axisLine: { lineStyle: { color: '#666' } }, axisLabel: { color: '#aaa' } },
+      yAxis: { type: 'value', axisLine: { lineStyle: { color: '#666' } }, axisLabel: { color: '#aaa' }, splitLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } } },
+      series: [{ type: 'line', smooth: true, data: Array.from({length: 6}, () => Math.random() * 10 + 10), itemStyle: { color: COLORS.primary } }]
     });
-    
-    console.log('RSBIM 平台 v2.0 初始化完成');
-  } catch (e) {
-    console.error('init error:', e);
+    window.modalChartInstance = chart;
   }
+}
+
+// 初始化
+function init() {
+  createParticles();
+  updateTime();
+  setInterval(updateTime, 1000);
+  
+  // 渲染图表
+  renderStrainChart();
+  renderDataChart();
+  renderSensorChart();
+  renderSensorGrid();
+  
+  // 窗口大小变化时重绘
+  window.addEventListener('resize', () => {
+    if (window.strainChart) window.strainChart.resize();
+    if (window.dataChart) window.dataChart.resize();
+    if (window.sensorChart) window.sensorChart.resize();
+    if (window.modalChartInstance) window.modalChartInstance.resize();
+  });
+  
+  console.log('RSBIM 平台 v2.0 科幻版初始化完成');
 }
 
 // 页面加载完成后初始化
 document.addEventListener('DOMContentLoaded', () => {
-  // 延迟初始化，确保容器有正确的尺寸
   setTimeout(init, 100);
 });

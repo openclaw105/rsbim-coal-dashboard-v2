@@ -1,87 +1,191 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RSBIM 储罐结构安全智能监测系统</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>储罐安全监测系统 | RSBIM 智能传感器 v2.0</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- 粒子背景 -->
-  <div class="particles" id="particles"></div>
+    <!-- 粒子背景 -->
+    <div class="particles" id="particles"></div>
 
-  <!-- 导航栏 -->
-  <nav class="navbar">
-    <div class="navbar-title">
-      <span class="logo">🏭</span>
-      RSBIM 储罐监测
+    <!-- 头部导航 -->
+    <header class="header">
+        <div class="header-left">
+            <h1 class="header-title">
+                <span class="logo">🏭</span>
+                RSBIM 储罐监测
+            </h1>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-btn active">
+                    <span class="nav-icon">🏠</span>首页
+                </a>
+                <a href="data.html" class="nav-btn">
+                    <span class="nav-icon">📊</span>综合数据
+                </a>
+                <a href="trends.html" class="nav-btn">
+                    <span class="nav-icon">📈</span>趋势监测
+                </a>
+                <a href="history.html" class="nav-btn">
+                    <span class="nav-icon">📜</span>历史数据
+                </a>
+                <a href="sensors.html" class="nav-btn">
+                    <span class="nav-icon">📡</span>传感器运维
+                </a>
+                <a href="settings.html" class="nav-btn">
+                    <span class="nav-icon">⚙️</span>系统设置
+                </a>
+            </nav>
+        </div>
+        <div class="header-right">
+            <span class="header-time" id="currentTime"></span>
+            <span class="header-status">
+                <span class="status-dot online"></span>
+                系统运行正常
+            </span>
+        </div>
+    </header>
+
+    <!-- 统计栏 -->
+    <div class="stats-bar">
+        <div class="stat-card" onclick="showModal('tank-detail')">
+            <div class="label">储罐总数</div>
+            <div class="value">5</div>
+            <div class="unit">座</div>
+            <div class="trend trend-stable">—</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">传感器</div>
+            <div class="value">128</div>
+            <div class="unit">个</div>
+            <div class="trend trend-stable">—</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">在线率</div>
+            <div class="value">99%</div>
+            <div class="unit">%</div>
+            <div class="trend trend-down">↑ 2%</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">应变均值</div>
+            <div class="value">12.5</div>
+            <div class="unit">με</div>
+            <div class="trend trend-down">↓ 0.3</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">倾斜均值</div>
+            <div class="value">0.02</div>
+            <div class="unit">°</div>
+            <div class="trend trend-stable">—</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">沉降均值</div>
+            <div class="value">8.3</div>
+            <div class="unit">mm</div>
+            <div class="trend trend-down">↓ 1.2</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">温度均值</div>
+            <div class="value">24.8</div>
+            <div class="unit">°C</div>
+            <div class="trend trend-up">↑ 0.5</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">系统状态</div>
+            <div class="value" style="color:var(--accent);font-size:16px;">正常</div>
+            <div class="unit">—</div>
+            <div class="trend trend-stable">—</div>
+        </div>
     </div>
-    <a href="index.html" class="nav-btn active">
-      <span class="nav-icon">🏠</span>首页
-    </a>
-    <a href="data.html" class="nav-btn">
-      <span class="nav-icon">📊</span>综合数据
-    </a>
-    <a href="trends.html" class="nav-btn">
-      <span class="nav-icon">📈</span>趋势监测
-    </a>
-    <a href="history.html" class="nav-btn">
-      <span class="nav-icon">📜</span>历史数据
-    </a>
-    <a href="sensors.html" class="nav-btn">
-      <span class="nav-icon">📡</span>传感器运维
-    </a>
-    <a href="settings.html" class="nav-btn">
-      <span class="nav-icon">⚙️</span>系统设置
-    </a>
-  </nav>
 
-  <!-- 页面内容 -->
-  <div class="page-container">
-    <div class="card">
-      <h2>🏭 储罐概览</h2>
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px;">
-        <div class="sensor-card">
-          <div style="font-size: 24px; color: var(--accent-color);">5</div>
-          <div style="font-size: 12px; color: var(--text-secondary);">储罐总数</div>
+    <!-- 主内容区 -->
+    <div class="main-content">
+        <!-- 实时应变监测 -->
+        <div class="chart-container full-width">
+            <div class="chart-title">📊 实时应变监测</div>
+            <div class="chart-box large" id="strainChart"></div>
         </div>
-        <div class="sensor-card">
-          <div style="font-size: 24px; color: var(--success-color);">128</div>
-          <div style="font-size: 12px; color: var(--text-secondary);">传感器数量</div>
+
+        <!-- 储罐数据对比 -->
+        <div class="chart-container half-width">
+            <div class="chart-title">📈 储罐数据对比</div>
+            <div class="chart-box" id="dataChart"></div>
         </div>
-        <div class="sensor-card">
-          <div style="font-size: 24px; color: var(--success-color);">99%</div>
-          <div style="font-size: 12px; color: var(--text-secondary);">在线率</div>
+
+        <!-- 传感器状态分布 -->
+        <div class="chart-container half-width">
+            <div class="chart-title">📡 传感器状态分布</div>
+            <div class="chart-box small" id="sensorChart"></div>
         </div>
-        <div class="sensor-card">
-          <div style="font-size: 24px; color: var(--success-color);">正常</div>
-          <div style="font-size: 12px; color: var(--text-secondary);">系统状态</div>
+
+        <!-- 告警信息 -->
+        <div class="alert-section">
+            <div class="alert-header">
+                <div class="alert-title">🔔 告警信息</div>
+                <div class="alert-badge">0 条未读</div>
+            </div>
+            <div class="alert-scroll-wrap">
+                <table class="alert-table">
+                    <thead>
+                        <tr>
+                            <th>时间</th>
+                            <th>储罐</th>
+                            <th>传感器</th>
+                            <th>类型</th>
+                            <th>数值</th>
+                            <th>阈值</th>
+                            <th>级别</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="7" style="text-align:center;color:#00ff88;padding:20px;">
+                                ✅ 当前无告警，所有传感器状态正常
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
-      </div>
+
+        <!-- 传感器列表 -->
+        <div class="chart-container full-width">
+            <div class="chart-title">📋 传感器列表</div>
+            <div class="sensor-grid" id="sensorGrid"></div>
+        </div>
     </div>
 
-    <div class="card">
-      <h2>📊 实时监测</h2>
-      <div class="chart-container" id="realtime-chart"></div>
-    </div>
-
-    <div class="card">
-      <h2>🔔 告警信息</h2>
-      <div id="alerts-list">
-        <div style="padding: 10px; color: var(--success-color);">
-          ✅ 当前无告警，所有传感器状态正常
+    <!-- 页脚 -->
+    <footer class="footer-bar">
+        <div class="info">
+            <span>RSBIM 储罐结构安全智能监测系统 v2.0</span>
+            <span>数据更新: <span id="lastUpdate"></span></span>
         </div>
-      </div>
+        <div class="blink">● 系统运行正常</div>
+    </footer>
+
+    <!-- 模态框 -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">传感器详情</h2>
+                <button class="modal-close" onclick="closeModal()">关闭</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-chart">
+                    <h3>历史趋势</h3>
+                    <div class="modal-chart-box" id="modalChart"></div>
+                </div>
+                <div class="modal-chart">
+                    <h3>详细信息</h3>
+                    <div id="modalInfo" style="padding:10px;color:#aaa;"></div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <!-- 页脚 -->
-  <footer class="footer">
-    <span>RSBIM 储罐结构安全智能监测系统 v2.0</span>
-    <span class="blink">● 系统运行正常</span>
-  </footer>
-
-  <script src="echarts.min.js"></script>
-  <script src="app.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>

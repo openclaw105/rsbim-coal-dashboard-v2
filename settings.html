@@ -1,128 +1,134 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>系统设置 - RSBIM 储罐监测</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系统设置 - RSBIM 储罐监测 v2.0</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="particles" id="particles"></div>
+    <div class="particles" id="particles"></div>
 
-  <nav class="navbar">
-    <div class="navbar-title">
-      <span class="logo">🏭</span>
-      RSBIM 储罐监测
-    </div>
-    <a href="index.html" class="nav-btn">
-      <span class="nav-icon">🏠</span>首页
-    </a>
-    <a href="data.html" class="nav-btn">
-      <span class="nav-icon">📊</span>综合数据
-    </a>
-    <a href="trends.html" class="nav-btn">
-      <span class="nav-icon">📈</span>趋势监测
-    </a>
-    <a href="history.html" class="nav-btn">
-      <span class="nav-icon">📜</span>历史数据
-    </a>
-    <a href="sensors.html" class="nav-btn">
-      <span class="nav-icon">📡</span>传感器运维
-    </a>
-    <a href="settings.html" class="nav-btn active">
-      <span class="nav-icon">⚙️</span>系统设置
-    </a>
-  </nav>
-
-  <div class="page-container">
-    <div class="card">
-      <h2>⚙️ 系统设置</h2>
-
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
-        <div>
-          <h3 style="margin-bottom: 15px; color: var(--accent-color);">告警阈值设置</h3>
-          <div style="margin-bottom: 15px;">
-            <label style="display: block; margin-bottom: 5px; color: var(--text-secondary);">应变阈值 (με)</label>
-            <input type="number" class="btn" value="85" style="width: 100%; padding: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(0,180,255,0.3); color: white; border-radius: 4px;">
-          </div>
-          <div style="margin-bottom: 15px;">
-            <label style="display: block; margin-bottom: 5px; color: var(--text-secondary);">倾斜阈值 (°)</label>
-            <input type="number" class="btn" value="0.5" style="width: 100%; padding: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(0,180,255,0.3); color: white; border-radius: 4px;">
-          </div>
-          <div style="margin-bottom: 15px;">
-            <label style="display: block; margin-bottom: 5px; color: var(--text-secondary);">沉降阈值 (mm)</label>
-            <input type="number" class="btn" value="50" style="width: 100%; padding: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(0,180,255,0.3); color: white; border-radius: 4px;">
-          </div>
-          <button class="btn btn-primary" onclick="saveThresholds()">保存阈值</button>
+    <header class="header">
+        <div class="header-left">
+            <h1 class="header-title"><span class="logo">🏭</span>RSBIM 储罐监测</h1>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-btn"><span class="nav-icon">🏠</span>首页</a>
+                <a href="data.html" class="nav-btn"><span class="nav-icon">📊</span>综合数据</a>
+                <a href="trends.html" class="nav-btn"><span class="nav-icon">📈</span>趋势监测</a>
+                <a href="history.html" class="nav-btn"><span class="nav-icon">📜</span>历史数据</a>
+                <a href="sensors.html" class="nav-btn"><span class="nav-icon">📡</span>传感器运维</a>
+                <a href="settings.html" class="nav-btn active"><span class="nav-icon">⚙️</span>系统设置</a>
+            </nav>
         </div>
-
-        <div>
-          <h3 style="margin-bottom: 15px; color: var(--accent-color);">数据采集设置</h3>
-          <div style="margin-bottom: 15px;">
-            <label style="display: block; margin-bottom: 5px; color: var(--text-secondary);">采集间隔 (秒)</label>
-            <input type="number" class="btn" value="60" style="width: 100%; padding: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(0,180,255,0.3); color: white; border-radius: 4px;">
-          </div>
-          <div style="margin-bottom: 15px;">
-            <label style="display: block; margin-bottom: 5px; color: var(--text-secondary);">历史数据保留 (天)</label>
-            <input type="number" class="btn" value="365" style="width: 100%; padding: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(0,180,255,0.3); color: white; border-radius: 4px;">
-          </div>
-          <button class="btn btn-primary" onclick="saveDataConfig()">保存配置</button>
+        <div class="header-right">
+            <span class="header-time" id="currentTime"></span>
+            <span class="header-status"><span class="status-dot online"></span>系统运行正常</span>
         </div>
+    </header>
 
-        <div>
-          <h3 style="margin-bottom: 15px; color: var(--accent-color);">通知设置</h3>
-          <div style="margin-bottom: 15px;">
-            <label style="display: flex; align-items: center; gap: 10px;">
-              <input type="checkbox" checked> 告警邮件通知
-            </label>
-          </div>
-          <div style="margin-bottom: 15px;">
-            <label style="display: flex; align-items: center; gap: 10px;">
-              <input type="checkbox" checked> 短信通知
-            </label>
-          </div>
-          <div style="margin-bottom: 15px;">
-            <label style="display: flex; align-items: center; gap: 10px;">
-              <input type="checkbox"> 微信通知
-            </label>
-          </div>
-          <button class="btn btn-primary" onclick="saveNotification()">保存通知</button>
-        </div>
-      </div>
+    <div class="stats-bar">
+        <div class="stat-card"><div class="label">储罐总数</div><div class="value">5</div><div class="unit">座</div></div>
+        <div class="stat-card"><div class="label">传感器</div><div class="value">128</div><div class="unit">个</div></div>
+        <div class="stat-card"><div class="label">在线率</div><div class="value">99%</div><div class="unit">%</div></div>
+        <div class="stat-card"><div class="label">应变均值</div><div class="value">12.5</div><div class="unit">με</div></div>
+        <div class="stat-card"><div class="label">倾斜均值</div><div class="value">0.02</div><div class="unit">°</div></div>
+        <div class="stat-card"><div class="label">沉降均值</div><div class="value">8.3</div><div class="unit">mm</div></div>
+        <div class="stat-card"><div class="label">温度均值</div><div class="value">24.8</div><div class="unit">°C</div></div>
+        <div class="stat-card"><div class="label">系统状态</div><div class="value" style="color:var(--accent);font-size:16px;">正常</div><div class="unit">—</div></div>
     </div>
 
-    <div class="card">
-      <h3 style="margin-bottom: 15px; color: var(--accent-color);">系统信息</h3>
-      <table class="data-table">
-        <tr>
-          <td>系统版本</td>
-          <td>v2.0</td>
-        </tr>
-        <tr>
-          <td>最后更新</td>
-          <td id="last-update"></td>
-        </tr>
-        <tr>
-          <td>运行时间</td>
-          <td id="uptime"></td>
-        </tr>
-        <tr>
-          <td>传感器总数</td>
-          <td>128</td>
-        </tr>
-      </table>
+    <div class="main-content">
+        <div class="chart-container full-width">
+            <div class="chart-title">⚙️ 系统设置</div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;">
+                <div>
+                    <h3 style="margin-bottom:15px;color:var(--primary);">告警阈值设置</h3>
+                    <div style="margin-bottom:15px;">
+                        <label style="display:block;margin-bottom:5px;color:var(--text-muted);">应变阈值 (με)</label>
+                        <input type="number" value="85" style="width:100%;padding:8px;background:rgba(0,0,0,0.3);border:1px solid rgba(0,180,255,0.3);color:white;border-radius:4px;">
+                    </div>
+                    <div style="margin-bottom:15px;">
+                        <label style="display:block;margin-bottom:5px;color:var(--text-muted);">倾斜阈值 (°)</label>
+                        <input type="number" value="0.5" style="width:100%;padding:8px;background:rgba(0,0,0,0.3);border:1px solid rgba(0,180,255,0.3);color:white;border-radius:4px;">
+                    </div>
+                    <div style="margin-bottom:15px;">
+                        <label style="display:block;margin-bottom:5px;color:var(--text-muted);">沉降阈值 (mm)</label>
+                        <input type="number" value="50" style="width:100%;padding:8px;background:rgba(0,0,0,0.3);border:1px solid rgba(0,180,255,0.3);color:white;border-radius:4px;">
+                    </div>
+                    <button class="nav-btn" onclick="saveThresholds()">💾 保存阈值</button>
+                </div>
+
+                <div>
+                    <h3 style="margin-bottom:15px;color:var(--primary);">数据采集设置</h3>
+                    <div style="margin-bottom:15px;">
+                        <label style="display:block;margin-bottom:5px;color:var(--text-muted);">采集间隔 (秒)</label>
+                        <input type="number" value="60" style="width:100%;padding:8px;background:rgba(0,0,0,0.3);border:1px solid rgba(0,180,255,0.3);color:white;border-radius:4px;">
+                    </div>
+                    <div style="margin-bottom:15px;">
+                        <label style="display:block;margin-bottom:5px;color:var(--text-muted);">历史数据保留 (天)</label>
+                        <input type="number" value="365" style="width:100%;padding:8px;background:rgba(0,0,0,0.3);border:1px solid rgba(0,180,255,0.3);color:white;border-radius:4px;">
+                    </div>
+                    <button class="nav-btn" onclick="saveDataConfig()">💾 保存配置</button>
+                </div>
+
+                <div>
+                    <h3 style="margin-bottom:15px;color:var(--primary);">通知设置</h3>
+                    <div style="margin-bottom:15px;">
+                        <label style="display:flex;align-items:center;gap:10px;color:var(--text-main);">
+                            <input type="checkbox" checked> 告警邮件通知
+                        </label>
+                    </div>
+                    <div style="margin-bottom:15px;">
+                        <label style="display:flex;align-items:center;gap:10px;color:var(--text-main);">
+                            <input type="checkbox" checked> 短信通知
+                        </label>
+                    </div>
+                    <div style="margin-bottom:15px;">
+                        <label style="display:flex;align-items:center;gap:10px;color:var(--text-main);">
+                            <input type="checkbox"> 微信通知
+                        </label>
+                    </div>
+                    <button class="nav-btn" onclick="saveNotification()">💾 保存通知</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="chart-container full-width">
+            <div class="chart-title">📊 系统信息</div>
+            <div style="padding:20px;">
+                <table class="alert-table" style="max-width:600px;">
+                    <tr><td>系统版本</td><td>v2.0</td></tr>
+                    <tr><td>最后更新</td><td id="lastUpdate"></td></tr>
+                    <tr><td>运行时间</td><td>已运行 30 天</td></tr>
+                    <tr><td>传感器总数</td><td>128</td></tr>
+                    <tr><td>储罐总数</td><td>5</td></tr>
+                    <tr><td>告警阈值</td><td>应变>85με, 倾斜>0.5°, 沉降>50mm</td></tr>
+                </table>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <footer class="footer">
-    <span>RSBIM 储罐结构安全智能监测系统 v2.0</span>
-    <span class="blink">● 系统运行正常</span>
-  </footer>
+    <footer class="footer-bar">
+        <div class="info"><span>RSBIM 储罐结构安全智能监测系统 v2.0</span><span>数据更新: <span id="lastUpdate2"></span></span></div>
+        <div class="blink">● 系统运行正常</div>
+    </footer>
 
-  <script src="app.js"></script>
-  <script>
-    document.getElementById('last-update').textContent = new Date().toLocaleString('zh-CN');
-    document.getElementById('uptime').textContent = '已运行 30 天';
-  </script>
+    <script>
+        function updateTime() {
+            const el = document.getElementById('currentTime');
+            if (el) el.textContent = new Date().toLocaleTimeString('zh-CN', {hour12:false});
+            const u1 = document.getElementById('lastUpdate');
+            if (u1) u1.textContent = new Date().toLocaleString('zh-CN');
+            const u2 = document.getElementById('lastUpdate2');
+            if (u2) u2.textContent = new Date().toLocaleTimeString('zh-CN');
+        }
+        updateTime(); setInterval(updateTime, 1000);
+        
+        function saveThresholds() { alert('阈值设置已保存'); }
+        function saveDataConfig() { alert('数据采集配置已保存'); }
+        function saveNotification() { alert('通知设置已保存'); }
+    </script>
 </body>
 </html>
