@@ -243,10 +243,18 @@ html, body {
 /* 图表容器 */
 .chart-container {
   width: 100%;
-  height: 400px;
+  height: 450px;
+  min-height: 400px;
   background: rgba(0,0,0,0.2);
   border-radius: 8px;
   padding: 10px;
+}
+
+/* 确保图表容器可见 */
+#realtime-chart, #data-chart, #strain-chart, #tilt-chart, #temp-chart, #history-chart, #sensor-map {
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
 }
 
 /* 粒子背景 */

@@ -134,6 +134,143 @@ function renderSensorsTable() {
 }
 
 /**
+ * 渲染应变趋势图表
+ */
+function renderStrainChart() {
+  try {
+    const chartDiv = document.getElementById('strain-chart');
+    if (!chartDiv) return;
+    
+    chartDiv.style.width = '100%';
+    chartDiv.style.height = '450px';
+    
+    const chart = echarts.init(chartDiv);
+    chart.setOption({
+      title: { text: '应变趋势监测', left: 'center', textStyle: { color: '#fff', fontSize: 16 } },
+      tooltip: { trigger: 'axis', backgroundColor: 'rgba(0,0,0,0.8)', textStyle: { color: '#fff' } },
+      legend: { data: TANKS.map(t => t.name), top: 30, textStyle: { color: '#fff' } },
+      grid: { left: '3%', right: '4%', bottom: '3%', top: '80px', containLabel: true },
+      xAxis: { type: 'category', boundaryGap: false, data: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'], axisLine: { lineStyle: { color: '#666' } }, axisLabel: { color: '#aaa' } },
+      yAxis: { type: 'value', name: 'με', max: 100, axisLine: { lineStyle: { color: '#666' } }, axisLabel: { color: '#aaa' }, splitLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } } },
+      series: TANKS.map((tank, i) => ({
+        name: tank.name,
+        type: 'line',
+        smooth: true,
+        data: Array.from({length: 7}, () => Math.random() * 20 + 5),
+        lineStyle: { width: 2 },
+        itemStyle: { color: ['#00d4ff', '#00ff88', '#ffaa00', '#ff6b6b', '#a855f7'][i] }
+      }))
+    });
+    window.strainChart = chart;
+    console.log('应变图表渲染完成');
+  } catch (e) {
+    console.error('renderStrainChart error:', e);
+  }
+}
+
+/**
+ * 渲染倾斜趋势图表
+ */
+function renderTiltChart() {
+  try {
+    const chartDiv = document.getElementById('tilt-chart');
+    if (!chartDiv) return;
+    
+    chartDiv.style.width = '100%';
+    chartDiv.style.height = '450px';
+    
+    const chart = echarts.init(chartDiv);
+    chart.setOption({
+      title: { text: '倾斜趋势监测', left: 'center', textStyle: { color: '#fff', fontSize: 16 } },
+      tooltip: { trigger: 'axis', backgroundColor: 'rgba(0,0,0,0.8)', textStyle: { color: '#fff' } },
+      legend: { data: TANKS.map(t => t.name), top: 30, textStyle: { color: '#fff' } },
+      grid: { left: '3%', right: '4%', bottom: '3%', top: '80px', containLabel: true },
+      xAxis: { type: 'category', boundaryGap: false, data: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'], axisLine: { lineStyle: { color: '#666' } }, axisLabel: { color: '#aaa' } },
+      yAxis: { type: 'value', name: '°', max: 0.5, axisLine: { lineStyle: { color: '#666' } }, axisLabel: { color: '#aaa' }, splitLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } } },
+      series: TANKS.map((tank, i) => ({
+        name: tank.name,
+        type: 'line',
+        smooth: true,
+        data: Array.from({length: 7}, () => Math.random() * 0.05 + 0.01),
+        lineStyle: { width: 2 },
+        itemStyle: { color: ['#00d4ff', '#00ff88', '#ffaa00', '#ff6b6b', '#a855f7'][i] }
+      }))
+    });
+    window.tiltChart = chart;
+    console.log('倾斜图表渲染完成');
+  } catch (e) {
+    console.error('renderTiltChart error:', e);
+  }
+}
+
+/**
+ * 渲染温度趋势图表
+ */
+function renderTempChart() {
+  try {
+    const chartDiv = document.getElementById('temp-chart');
+    if (!chartDiv) return;
+    
+    chartDiv.style.width = '100%';
+    chartDiv.style.height = '450px';
+    
+    const chart = echarts.init(chartDiv);
+    chart.setOption({
+      title: { text: '温度趋势监测', left: 'center', textStyle: { color: '#fff', fontSize: 16 } },
+      tooltip: { trigger: 'axis', backgroundColor: 'rgba(0,0,0,0.8)', textStyle: { color: '#fff' } },
+      legend: { data: TANKS.map(t => t.name), top: 30, textStyle: { color: '#fff' } },
+      grid: { left: '3%', right: '4%', bottom: '3%', top: '80px', containLabel: true },
+      xAxis: { type: 'category', boundaryGap: false, data: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'], axisLine: { lineStyle: { color: '#666' } }, axisLabel: { color: '#aaa' } },
+      yAxis: { type: 'value', name: '°C', axisLine: { lineStyle: { color: '#666' } }, axisLabel: { color: '#aaa' }, splitLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } } },
+      series: TANKS.map((tank, i) => ({
+        name: tank.name,
+        type: 'line',
+        smooth: true,
+        data: Array.from({length: 7}, () => Math.random() * 10 + 20),
+        lineStyle: { width: 2 },
+        itemStyle: { color: ['#00d4ff', '#00ff88', '#ffaa00', '#ff6b6b', '#a855f7'][i] }
+      }))
+    });
+    window.tempChart = chart;
+    console.log('温度图表渲染完成');
+  } catch (e) {
+    console.error('renderTempChart error:', e);
+  }
+}
+
+/**
+ * 渲染传感器分布地图
+ */
+function renderSensorMap() {
+  try {
+    const chartDiv = document.getElementById('sensor-map');
+    if (!chartDiv) return;
+    
+    chartDiv.style.width = '100%';
+    chartDiv.style.height = '300px';
+    
+    const chart = echarts.init(chartDiv);
+    chart.setOption({
+      title: { text: '传感器分布', left: 'center', textStyle: { color: '#fff', fontSize: 16 } },
+      tooltip: { trigger: 'item', backgroundColor: 'rgba(0,0,0,0.8)', textStyle: { color: '#fff' } },
+      series: [{
+        type: 'scatter',
+        symbolSize: 15,
+        data: TANKS.map((tank, i) => ({
+          name: tank.name,
+          value: [Math.random() * 100, Math.random() * 100, i]
+        })),
+        itemStyle: { color: ['#00d4ff', '#00ff88', '#ffaa00', '#ff6b6b', '#a855f7'] }
+      }]
+    });
+    window.sensorMap = chart;
+    console.log('传感器地图渲染完成');
+  } catch (e) {
+    console.error('renderSensorMap error:', e);
+  }
+}
+
+/**
  * 渲染实时图表
  */
 function renderRealtimeChart() {
@@ -141,24 +278,35 @@ function renderRealtimeChart() {
     const chartDiv = document.getElementById('realtime-chart');
     if (!chartDiv) return;
     
+    // 确保容器有明确尺寸
+    chartDiv.style.width = '100%';
+    chartDiv.style.height = '450px';
+    
     const chart = echarts.init(chartDiv);
     
     const option = {
-      title: { text: '实时应变监测', left: 'center' },
-      tooltip: { trigger: 'axis' },
+      title: { text: '实时应变监测', left: 'center', textStyle: { color: '#fff', fontSize: 16 } },
+      tooltip: { trigger: 'axis', backgroundColor: 'rgba(0,0,0,0.8)', textStyle: { color: '#fff' } },
       legend: {
         data: TANKS.map(t => t.name),
-        top: 30
+        top: 30,
+        textStyle: { color: '#fff' }
       },
+      grid: { left: '3%', right: '4%', bottom: '3%', top: '80px', containLabel: true },
       xAxis: {
         type: 'category',
         boundaryGap: false,
-        data: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00']
+        data: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'],
+        axisLine: { lineStyle: { color: '#666' } },
+        axisLabel: { color: '#aaa' }
       },
       yAxis: {
         type: 'value',
         name: 'με',
-        max: 100
+        max: 100,
+        axisLine: { lineStyle: { color: '#666' } },
+        axisLabel: { color: '#aaa' },
+        splitLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } }
       },
       series: TANKS.map((tank, i) => ({
         name: tank.name,
@@ -168,12 +316,19 @@ function renderRealtimeChart() {
         lineStyle: { width: 2 },
         itemStyle: {
           color: ['#00d4ff', '#00ff88', '#ffaa00', '#ff6b6b', '#a855f7'][i]
+        },
+        areaStyle: {
+          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            { offset: 0, color: ['#00d4ff', '#00ff88', '#ffaa00', '#ff6b6b', '#a855f7'][i] + '80' },
+            { offset: 1, color: ['#00d4ff', '#00ff88', '#ffaa00', '#ff6b6b', '#a855f7'][i] + '00' }
+          ])
         }
       }))
     };
     
     chart.setOption(option);
     window.realtimeChart = chart;
+    console.log('实时图表渲染完成');
   } catch (e) {
     console.error('renderRealtimeChart error:', e);
   }
@@ -187,49 +342,40 @@ function renderDataChart() {
     const chartDiv = document.getElementById('data-chart');
     if (!chartDiv) return;
     
+    chartDiv.style.width = '100%';
+    chartDiv.style.height = '450px';
+    
     const chart = echarts.init(chartDiv);
     
     const option = {
-      title: { text: '储罐数据对比', left: 'center' },
-      tooltip: { trigger: 'axis' },
+      title: { text: '储罐数据对比', left: 'center', textStyle: { color: '#fff', fontSize: 16 } },
+      tooltip: { trigger: 'axis', backgroundColor: 'rgba(0,0,0,0.8)', textStyle: { color: '#fff' } },
       legend: {
         data: ['应变', '倾斜', '沉降'],
-        top: 30
+        top: 30,
+        textStyle: { color: '#fff' }
       },
+      grid: { left: '3%', right: '4%', bottom: '3%', top: '80px', containLabel: true },
       xAxis: {
         type: 'category',
-        data: TANKS.map(t => t.name)
+        data: TANKS.map(t => t.name),
+        axisLine: { lineStyle: { color: '#666' } },
+        axisLabel: { color: '#aaa' }
       },
       yAxis: [
-        { type: 'value', name: 'με', position: 'left' },
-        { type: 'value', name: 'mm', position: 'right' }
+        { type: 'value', name: 'με', position: 'left', axisLine: { lineStyle: { color: '#666' } }, axisLabel: { color: '#aaa' }, splitLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } } },
+        { type: 'value', name: 'mm', position: 'right', axisLine: { lineStyle: { color: '#666' } }, axisLabel: { color: '#aaa' }, splitLine: { show: false } }
       ],
       series: [
-        {
-          name: '应变',
-          type: 'bar',
-          data: TANKS.map(() => Math.random() * 20 + 10),
-          itemStyle: { color: '#00d4ff' }
-        },
-        {
-          name: '倾斜',
-          type: 'line',
-          yAxisIndex: 0,
-          data: TANKS.map(() => Math.random() * 0.05 + 0.01),
-          itemStyle: { color: '#00ff88' }
-        },
-        {
-          name: '沉降',
-          type: 'line',
-          yAxisIndex: 1,
-          data: TANKS.map(() => Math.random() * 20 + 5),
-          itemStyle: { color: '#ffaa00' }
-        }
+        { name: '应变', type: 'bar', data: TANKS.map(() => Math.random() * 20 + 10), itemStyle: { color: '#00d4ff' } },
+        { name: '倾斜', type: 'line', yAxisIndex: 0, data: TANKS.map(() => Math.random() * 0.05 + 0.01), itemStyle: { color: '#00ff88' } },
+        { name: '沉降', type: 'line', yAxisIndex: 1, data: TANKS.map(() => Math.random() * 20 + 5), itemStyle: { color: '#ffaa00' } }
       ]
     };
     
     chart.setOption(option);
     window.dataChart = chart;
+    console.log('数据图表渲染完成');
   } catch (e) {
     console.error('renderDataChart error:', e);
   }
@@ -279,23 +425,36 @@ function queryHistory() {
     // 渲染图表
     const chartDiv = document.getElementById('history-chart');
     if (chartDiv) {
+      chartDiv.style.width = '100%';
+      chartDiv.style.height = '450px';
+      
       const chart = echarts.init(chartDiv);
       chart.setOption({
-        title: { text: '历史数据趋势', left: 'center' },
-        tooltip: { trigger: 'axis' },
+        title: { text: '历史数据趋势', left: 'center', textStyle: { color: '#fff', fontSize: 16 } },
+        tooltip: { trigger: 'axis', backgroundColor: 'rgba(0,0,0,0.8)', textStyle: { color: '#fff' } },
+        grid: { left: '3%', right: '4%', bottom: '3%', top: '60px', containLabel: true },
         xAxis: {
           type: 'category',
-          data: historyData.map(d => d.time.split(' ')[1])
+          data: historyData.map(d => d.time.split(' ')[1]),
+          axisLine: { lineStyle: { color: '#666' } },
+          axisLabel: { color: '#aaa' }
         },
-        yAxis: { type: 'value' },
+        yAxis: { type: 'value', axisLine: { lineStyle: { color: '#666' } }, axisLabel: { color: '#aaa' }, splitLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } } },
         series: [{
           type: 'line',
           smooth: true,
           data: historyData.map(d => parseFloat(d.value)),
-          itemStyle: { color: '#00d4ff' }
+          itemStyle: { color: '#00d4ff' },
+          areaStyle: {
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: '#00d4ff80' },
+              { offset: 1, color: '#00d4ff00' }
+            ])
+          }
         }]
       });
       window.historyChart = chart;
+      console.log('历史图表渲染完成');
     }
   } catch (e) {
     console.error('queryHistory error:', e);
@@ -370,11 +529,23 @@ function init() {
     if (document.getElementById('data-chart')) {
       renderDataChart();
     }
+    if (document.getElementById('strain-chart')) {
+      renderStrainChart();
+    }
+    if (document.getElementById('tilt-chart')) {
+      renderTiltChart();
+    }
+    if (document.getElementById('temp-chart')) {
+      renderTempChart();
+    }
     if (document.getElementById('sensors-table-body')) {
       renderSensorsTable();
     }
     if (document.getElementById('history-table-body')) {
       queryHistory();
+    }
+    if (document.getElementById('sensor-map')) {
+      renderSensorMap();
     }
     
     // 窗口大小变化时重绘图表
@@ -382,6 +553,10 @@ function init() {
       if (window.realtimeChart) window.realtimeChart.resize();
       if (window.dataChart) window.dataChart.resize();
       if (window.historyChart) window.historyChart.resize();
+      if (window.strainChart) window.strainChart.resize();
+      if (window.tiltChart) window.tiltChart.resize();
+      if (window.tempChart) window.tempChart.resize();
+      if (window.sensorMap) window.sensorMap.resize();
     });
     
     console.log('RSBIM 平台 v2.0 初始化完成');
