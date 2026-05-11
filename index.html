@@ -8,49 +8,18 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- 粒子背景 -->
     <div class="particles" id="particles"></div>
 
-    <!-- 头部导航 -->
-    <header class="header">
-        <div class="header-left">
-            <h1 class="header-title">
-                <span class="logo">🏭</span>
-                RSBIM 储罐监测
-            </h1>
-            <nav class="nav-menu">
-                <a href="index.html" class="nav-btn active">
-                    <span class="nav-icon">🏠</span>首页
-                </a>
-                <a href="data.html" class="nav-btn">
-                    <span class="nav-icon">📊</span>综合数据
-                </a>
-                <a href="trends.html" class="nav-btn">
-                    <span class="nav-icon">📈</span>趋势监测
-                </a>
-                <a href="history.html" class="nav-btn">
-                    <span class="nav-icon">📜</span>历史数据
-                </a>
-                <a href="sensors.html" class="nav-btn">
-                    <span class="nav-icon">📡</span>传感器运维
-                </a>
-                <a href="settings.html" class="nav-btn">
-                    <span class="nav-icon">⚙️</span>系统设置
-                </a>
-            </nav>
+    <div class="header">
+        <h1>RSBIM 储罐监测</h1>
+        <div class="meta">
+            <span class="time" id="currentTime"></span>
+            <span class="status"><span class="status-dot online"></span>系统运行正常</span>
         </div>
-        <div class="header-right">
-            <span class="header-time" id="currentTime"></span>
-            <span class="header-status">
-                <span class="status-dot online"></span>
-                系统运行正常
-            </span>
-        </div>
-    </header>
+    </div>
 
-    <!-- 统计栏 -->
     <div class="stats-bar">
-        <div class="stat-card" onclick="showModal('tank-detail')">
+        <div class="stat-card">
             <div class="label">储罐总数</div>
             <div class="value">5</div>
             <div class="unit">座</div>
@@ -100,73 +69,49 @@
         </div>
     </div>
 
-    <!-- 主内容区 -->
     <div class="main-content">
-        <!-- 实时应变监测 -->
         <div class="chart-container full-width">
-            <div class="chart-title">📊 实时应变监测</div>
+            <div class="chart-title">实时应变监测</div>
             <div class="chart-box large" id="strainChart"></div>
         </div>
 
-        <!-- 储罐数据对比 -->
         <div class="chart-container half-width">
-            <div class="chart-title">📈 储罐数据对比</div>
+            <div class="chart-title">储罐数据对比</div>
             <div class="chart-box" id="dataChart"></div>
         </div>
 
-        <!-- 传感器状态分布 -->
         <div class="chart-container half-width">
-            <div class="chart-title">📡 传感器状态分布</div>
+            <div class="chart-title">传感器状态分布</div>
             <div class="chart-box small" id="sensorChart"></div>
         </div>
 
-        <!-- 告警信息 -->
         <div class="alert-section">
             <div class="alert-header">
-                <div class="alert-title">🔔 告警信息</div>
+                <div class="alert-title">告警信息</div>
                 <div class="alert-badge">0 条未读</div>
             </div>
             <div class="alert-scroll-wrap">
                 <table class="alert-table">
-                    <thead>
-                        <tr>
-                            <th>时间</th>
-                            <th>储罐</th>
-                            <th>传感器</th>
-                            <th>类型</th>
-                            <th>数值</th>
-                            <th>阈值</th>
-                            <th>级别</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td colspan="7" style="text-align:center;color:#00ff88;padding:20px;">
-                                ✅ 当前无告警，所有传感器状态正常
-                            </td>
-                        </tr>
-                    </tbody>
+                    <thead><tr><th>时间</th><th>储罐</th><th>传感器</th><th>类型</th><th>数值</th><th>阈值</th><th>级别</th></tr></thead>
+                    <tbody><tr><td colspan="7" style="text-align:center;color:#00ff88;padding:20px;">✅ 当前无告警，所有传感器状态正常</td></tr></tbody>
                 </table>
             </div>
         </div>
 
-        <!-- 传感器列表 -->
         <div class="chart-container full-width">
-            <div class="chart-title">📋 传感器列表</div>
+            <div class="chart-title">传感器列表</div>
             <div class="sensor-grid" id="sensorGrid"></div>
         </div>
     </div>
 
-    <!-- 页脚 -->
-    <footer class="footer-bar">
+    <div class="footer-bar">
         <div class="info">
             <span>RSBIM 储罐结构安全智能监测系统 v2.0</span>
             <span>数据更新: <span id="lastUpdate"></span></span>
         </div>
         <div class="blink">● 系统运行正常</div>
-    </footer>
+    </div>
 
-    <!-- 模态框 -->
     <div class="modal" id="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -186,6 +131,138 @@
         </div>
     </div>
 
-    <script src="app.js"></script>
+    <script>
+        const TANKS = [
+            {id:'TANK-001',name:'1号储罐',type:'原油储罐',capacity:10000},
+            {id:'TANK-002',name:'2号储罐',type:'成品油罐',capacity:5000},
+            {id:'TANK-003',name:'3号储罐',type:'化学品罐',capacity:2000},
+            {id:'TANK-004',name:'4号储罐',type:'LNG储罐',capacity:3000},
+            {id:'TANK-005',name:'5号储罐',type:'水罐',capacity:8000}
+        ];
+        const COLORS = {primary:'#00d4ff',accent:'#00ff88',warning:'#ffaa00',danger:'#ff4444',purple:'#a855f7'};
+
+        function createParticles() {
+            const c = document.getElementById('particles');
+            if (!c) return;
+            for (let i = 0; i < 100; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.left = Math.random() * 100 + '%';
+                p.style.animationDelay = Math.random() * 15 + 's';
+                p.style.animationDuration = (15 + Math.random() * 10) + 's';
+                c.appendChild(p);
+            }
+        }
+
+        function updateTime() {
+            const t = document.getElementById('currentTime');
+            const u = document.getElementById('lastUpdate');
+            if (t) t.textContent = new Date().toLocaleTimeString('zh-CN', {hour12:false});
+            if (u) u.textContent = new Date().toLocaleTimeString('zh-CN');
+        }
+
+        function getSensorStatus(v) {
+            if (v > 85) return 'danger';
+            if (v > 70) return 'warning';
+            return 'normal';
+        }
+
+        function generateSensors() {
+            const sensors = [];
+            TANKS.forEach(tank => {
+                ['strain','tilt','settlement','temperature'].forEach(type => {
+                    const base = {strain:Math.random()*20+5, tilt:Math.random()*0.05+0.01, settlement:Math.random()*20+5, temperature:20+Math.random()*10}[type];
+                    sensors.push({
+                        id: 'SN-' + tank.id + '-' + type,
+                        tankName: tank.name,
+                        type: type,
+                        typeName: {strain:'应变传感器',tilt:'倾斜传感器',settlement:'沉降传感器',temperature:'温度传感器'}[type],
+                        unit: {strain:'με',tilt:'°',settlement:'mm',temperature:'°C'}[type],
+                        value: base.toFixed(2),
+                        status: getSensorStatus(type === 'temperature' ? base : base * 5)
+                    });
+                });
+            });
+            return sensors;
+        }
+
+        function renderSensorGrid() {
+            const g = document.getElementById('sensorGrid');
+            if (!g) return;
+            const sensors = generateSensors();
+            g.innerHTML = sensors.map(s => 
+                '<div class="sensor-card ' + s.status + '" onclick="showDetail(\'' + s.id + '\')">' +
+                '<div class="id">' + s.id + '</div>' +
+                '<div class="value">' + s.value + '</div>' +
+                '<div class="type">' + s.typeName + '</div>' +
+                '</div>'
+            ).join('');
+        }
+
+        function renderChart(id, title, series) {
+            const div = document.getElementById(id);
+            if (!div) return;
+            const chart = echarts.init(div);
+            chart.setOption({
+                tooltip: {trigger:'axis',backgroundColor:'rgba(0,0,0,0.85)',textStyle:{color:'#fff'}},
+                legend: {data:TANKS.map(t=>t.name),top:30,textStyle:{color:'#fff'}},
+                grid: {left:'3%',right:'4%',bottom:'3%',top:'80px',containLabel:true},
+                xAxis: {type:'category',boundaryGap:false,data:['00:00','04:00','08:00','12:00','16:00','20:00','24:00'],axisLine:{lineStyle:{color:'#666'}},axisLabel:{color:'#aaa'}},
+                yAxis: {type:'value',axisLine:{lineStyle:{color:'#666'}},axisLabel:{color:'#aaa'},splitLine:{lineStyle:{color:'rgba(255,255,255,0.1)'}}},
+                series: series.map((s,i) => ({name:s.name,type:'line',smooth:true,data:s.data,lineStyle:{width:2},itemStyle:{color:COLORS[i]||COLORS.primary}}))
+            });
+            return chart;
+        }
+
+        function renderPieChart(id) {
+            const div = document.getElementById(id);
+            if (!div) return;
+            const chart = echarts.init(div);
+            chart.setOption({
+                tooltip: {trigger:'item',backgroundColor:'rgba(0,0,0,0.85)',textStyle:{color:'#fff'}},
+                legend: {top:'bottom',textStyle:{color:'#fff'}},
+                series: [{type:'pie',radius:['40%','70%'],center:['50%','45%'],avoidLabelOverlap:false,itemStyle:{borderRadius:5,borderColor:'#0a0e27',borderWidth:2},label:{show:false},emphasis:{label:{show:true,fontSize:14,fontWeight:'bold',color:'#fff'}},data:[{value:100+Math.floor(Math.random()*10),name:'正常',itemStyle:{color:COLORS.accent}},{value:Math.floor(Math.random()*5),name:'警告',itemStyle:{color:COLORS.warning}},{value:0,name:'危险',itemStyle:{color:COLORS.danger}}]}]
+            });
+            return chart;
+        }
+
+        function showDetail(id) {
+            const modal = document.getElementById('modal');
+            document.getElementById('modalTitle').textContent = '传感器详情';
+            document.getElementById('modalInfo').innerHTML = '<div style="margin-bottom:10px;"><strong style="color:'+COLORS.primary+'">' + id + '</strong></div><div>状态: <span style="color:'+COLORS.accent+'">正常</span></div><div>最后更新: ' + new Date().toLocaleString() + '</div>';
+            const mc = document.getElementById('modalChart');
+            if (mc) {
+                const chart = echarts.init(mc);
+                chart.setOption({tooltip:{trigger:'axis',backgroundColor:'rgba(0,0,0,0.85)',textStyle:{color:'#fff'}},xAxis:{type:'category',data:['1h','2h','3h','4h','5h','6h'],axisLine:{lineStyle:{color:'#666'}},axisLabel:{color:'#aaa'}},yAxis:{type:'value',axisLine:{lineStyle:{color:'#666'}},axisLabel:{color:'#aaa'},splitLine:{lineStyle:{color:'rgba(255,255,255,0.1)'}}},series:[{type:'line',smooth:true,data:Array.from({length:6},()=>Math.random()*10+10),itemStyle:{color:COLORS.primary}}]});
+                window.modalChart = chart;
+            }
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+        }
+
+        function init() {
+            createParticles();
+            updateTime();
+            setInterval(updateTime, 1000);
+            renderChart('strainChart', '实时应变监测', TANKS.map((t,i) => ({name:t.name,data:Array.from({length:7},()=>Math.random()*30+10)})));
+            renderChart('dataChart', '储罐数据对比', [
+                {name:'应变',data:TANKS.map(()=>Math.random()*20+10)},
+                {name:'倾斜',data:TANKS.map(()=>Math.random()*0.05+0.01)},
+                {name:'沉降',data:TANKS.map(()=>Math.random()*20+5)}
+            ]);
+            renderPieChart('sensorChart');
+            renderSensorGrid();
+            window.addEventListener('resize', () => {
+                for (const k of ['strainChart','dataChart','sensorChart','modalChart']) {
+                    if (window[k]) window[k].resize();
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => setTimeout(init, 100));
+    </script>
 </body>
 </html>

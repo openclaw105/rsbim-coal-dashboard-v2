@@ -10,38 +10,28 @@
 <body>
     <div class="particles" id="particles"></div>
 
-    <header class="header">
-        <div class="header-left">
-            <h1 class="header-title"><span class="logo">🏭</span>RSBIM 储罐监测</h1>
-            <nav class="nav-menu">
-                <a href="index.html" class="nav-btn"><span class="nav-icon">🏠</span>首页</a>
-                <a href="data.html" class="nav-btn"><span class="nav-icon">📊</span>综合数据</a>
-                <a href="trends.html" class="nav-btn"><span class="nav-icon">📈</span>趋势监测</a>
-                <a href="history.html" class="nav-btn active"><span class="nav-icon">📜</span>历史数据</a>
-                <a href="sensors.html" class="nav-btn"><span class="nav-icon">📡</span>传感器运维</a>
-                <a href="settings.html" class="nav-btn"><span class="nav-icon">⚙️</span>系统设置</a>
-            </nav>
+    <div class="header">
+        <h1>RSBIM 储罐监测</h1>
+        <div class="meta">
+            <span class="time" id="currentTime"></span>
+            <span class="status"><span class="status-dot online"></span>系统运行正常</span>
         </div>
-        <div class="header-right">
-            <span class="header-time" id="currentTime"></span>
-            <span class="header-status"><span class="status-dot online"></span>系统运行正常</span>
-        </div>
-    </header>
+    </div>
 
     <div class="stats-bar">
-        <div class="stat-card"><div class="label">储罐总数</div><div class="value">5</div><div class="unit">座</div></div>
-        <div class="stat-card"><div class="label">传感器</div><div class="value">128</div><div class="unit">个</div></div>
-        <div class="stat-card"><div class="label">在线率</div><div class="value">99%</div><div class="unit">%</div></div>
-        <div class="stat-card"><div class="label">应变均值</div><div class="value">12.5</div><div class="unit">με</div></div>
-        <div class="stat-card"><div class="label">倾斜均值</div><div class="value">0.02</div><div class="unit">°</div></div>
-        <div class="stat-card"><div class="label">沉降均值</div><div class="value">8.3</div><div class="unit">mm</div></div>
-        <div class="stat-card"><div class="label">温度均值</div><div class="value">24.8</div><div class="unit">°C</div></div>
-        <div class="stat-card"><div class="label">系统状态</div><div class="value" style="color:var(--accent);font-size:16px;">正常</div><div class="unit">—</div></div>
+        <div class="stat-card"><div class="label">储罐总数</div><div class="value">5</div><div class="unit">座</div><div class="trend trend-stable">—</div></div>
+        <div class="stat-card"><div class="label">传感器</div><div class="value">128</div><div class="unit">个</div><div class="trend trend-stable">—</div></div>
+        <div class="stat-card"><div class="label">在线率</div><div class="value">99%</div><div class="unit">%</div><div class="trend trend-down">↑ 2%</div></div>
+        <div class="stat-card"><div class="label">应变均值</div><div class="value">12.5</div><div class="unit">με</div><div class="trend trend-down">↓ 0.3</div></div>
+        <div class="stat-card"><div class="label">倾斜均值</div><div class="value">0.02</div><div class="unit">°</div><div class="trend trend-stable">—</div></div>
+        <div class="stat-card"><div class="label">沉降均值</div><div class="value">8.3</div><div class="unit">mm</div><div class="trend trend-down">↓ 1.2</div></div>
+        <div class="stat-card"><div class="label">温度均值</div><div class="value">24.8</div><div class="unit">°C</div><div class="trend trend-up">↑ 0.5</div></div>
+        <div class="stat-card"><div class="label">系统状态</div><div class="value" style="color:var(--accent);font-size:16px;">正常</div><div class="unit">—</div><div class="trend trend-stable">—</div></div>
     </div>
 
     <div class="main-content">
         <div class="chart-container full-width">
-            <div class="chart-title">📜 历史数据查询</div>
+            <div class="chart-title">历史数据查询</div>
             <div style="display:flex;gap:10px;margin-bottom:20px;">
                 <select class="nav-btn" id="tankSelect"><option value="all">全部储罐</option><option>TANK-001</option><option>TANK-002</option><option>TANK-003</option><option>TANK-004</option><option>TANK-005</option></select>
                 <select class="nav-btn" id="typeSelect"><option value="all">全部类型</option><option>应变传感器</option><option>倾斜传感器</option><option>沉降传感器</option><option>温度传感器</option></select>
@@ -52,7 +42,7 @@
         </div>
 
         <div class="chart-container full-width">
-            <div class="chart-title">📋 历史数据记录</div>
+            <div class="chart-title">历史数据记录</div>
             <div class="alert-scroll-wrap">
                 <table class="alert-table">
                     <thead><tr><th>时间</th><th>储罐</th><th>传感器类型</th><th>数值</th><th>单位</th><th>状态</th></tr></thead>
@@ -62,29 +52,29 @@
         </div>
     </div>
 
-    <footer class="footer-bar">
+    <div class="footer-bar">
         <div class="info"><span>RSBIM 储罐结构安全智能监测系统 v2.0</span><span>数据更新: <span id="lastUpdate"></span></span></div>
         <div class="blink">● 系统运行正常</div>
-    </footer>
+    </div>
 
     <script>
         function updateTime() {
-            const el = document.getElementById('currentTime');
-            if (el) el.textContent = new Date().toLocaleTimeString('zh-CN', {hour12:false});
+            const t = document.getElementById('currentTime');
             const u = document.getElementById('lastUpdate');
+            if (t) t.textContent = new Date().toLocaleTimeString('zh-CN', {hour12:false});
             if (u) u.textContent = new Date().toLocaleTimeString('zh-CN');
         }
         updateTime(); setInterval(updateTime, 1000);
-        
+
         function queryHistory() {
             const tbody = document.getElementById('historyTable');
             if (!tbody) return;
             const data = Array.from({length:20}, (_, i) => {
                 const time = new Date(Date.now() - i*3600000);
-                return `<tr><td>${time.toLocaleString('zh-CN')}</td><td>TANK-00${Math.floor(Math.random()*5)+1}</td><td>应变传感器</td><td>${(Math.random()*30+10).toFixed(2)}</td><td>με</td><td><span class="status-indicator status-normal">正常</span></td></tr>`;
+                return '<tr><td>' + time.toLocaleString('zh-CN') + '</td><td>TANK-00' + (Math.floor(Math.random()*5)+1) + '</td><td>应变传感器</td><td>' + (Math.random()*30+10).toFixed(2) + '</td><td>με</td><td><span style="color:#00ff88">正常</span></td></tr>';
             }).join('');
             tbody.innerHTML = data;
-            
+
             const chartDiv = document.getElementById('historyChart');
             if (chartDiv) {
                 const chart = echarts.init(chartDiv);
@@ -98,9 +88,9 @@
                 window.historyChart = chart;
             }
         }
-        
+
         function exportData() { alert('导出功能待实现'); }
-        
+
         queryHistory();
         window.addEventListener('resize', () => window.historyChart && window.historyChart.resize());
     </script>

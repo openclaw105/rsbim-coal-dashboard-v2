@@ -10,38 +10,28 @@
 <body>
     <div class="particles" id="particles"></div>
 
-    <header class="header">
-        <div class="header-left">
-            <h1 class="header-title"><span class="logo">🏭</span>RSBIM 储罐监测</h1>
-            <nav class="nav-menu">
-                <a href="index.html" class="nav-btn"><span class="nav-icon">🏠</span>首页</a>
-                <a href="data.html" class="nav-btn"><span class="nav-icon">📊</span>综合数据</a>
-                <a href="trends.html" class="nav-btn"><span class="nav-icon">📈</span>趋势监测</a>
-                <a href="history.html" class="nav-btn"><span class="nav-icon">📜</span>历史数据</a>
-                <a href="sensors.html" class="nav-btn"><span class="nav-icon">📡</span>传感器运维</a>
-                <a href="settings.html" class="nav-btn active"><span class="nav-icon">⚙️</span>系统设置</a>
-            </nav>
+    <div class="header">
+        <h1>RSBIM 储罐监测</h1>
+        <div class="meta">
+            <span class="time" id="currentTime"></span>
+            <span class="status"><span class="status-dot online"></span>系统运行正常</span>
         </div>
-        <div class="header-right">
-            <span class="header-time" id="currentTime"></span>
-            <span class="header-status"><span class="status-dot online"></span>系统运行正常</span>
-        </div>
-    </header>
+    </div>
 
     <div class="stats-bar">
-        <div class="stat-card"><div class="label">储罐总数</div><div class="value">5</div><div class="unit">座</div></div>
-        <div class="stat-card"><div class="label">传感器</div><div class="value">128</div><div class="unit">个</div></div>
-        <div class="stat-card"><div class="label">在线率</div><div class="value">99%</div><div class="unit">%</div></div>
-        <div class="stat-card"><div class="label">应变均值</div><div class="value">12.5</div><div class="unit">με</div></div>
-        <div class="stat-card"><div class="label">倾斜均值</div><div class="value">0.02</div><div class="unit">°</div></div>
-        <div class="stat-card"><div class="label">沉降均值</div><div class="value">8.3</div><div class="unit">mm</div></div>
-        <div class="stat-card"><div class="label">温度均值</div><div class="value">24.8</div><div class="unit">°C</div></div>
-        <div class="stat-card"><div class="label">系统状态</div><div class="value" style="color:var(--accent);font-size:16px;">正常</div><div class="unit">—</div></div>
+        <div class="stat-card"><div class="label">储罐总数</div><div class="value">5</div><div class="unit">座</div><div class="trend trend-stable">—</div></div>
+        <div class="stat-card"><div class="label">传感器</div><div class="value">128</div><div class="unit">个</div><div class="trend trend-stable">—</div></div>
+        <div class="stat-card"><div class="label">在线率</div><div class="value">99%</div><div class="unit">%</div><div class="trend trend-down">↑ 2%</div></div>
+        <div class="stat-card"><div class="label">应变均值</div><div class="value">12.5</div><div class="unit">με</div><div class="trend trend-down">↓ 0.3</div></div>
+        <div class="stat-card"><div class="label">倾斜均值</div><div class="value">0.02</div><div class="unit">°</div><div class="trend trend-stable">—</div></div>
+        <div class="stat-card"><div class="label">沉降均值</div><div class="value">8.3</div><div class="unit">mm</div><div class="trend trend-down">↓ 1.2</div></div>
+        <div class="stat-card"><div class="label">温度均值</div><div class="value">24.8</div><div class="unit">°C</div><div class="trend trend-up">↑ 0.5</div></div>
+        <div class="stat-card"><div class="label">系统状态</div><div class="value" style="color:var(--accent);font-size:16px;">正常</div><div class="unit">—</div><div class="trend trend-stable">—</div></div>
     </div>
 
     <div class="main-content">
         <div class="chart-container full-width">
-            <div class="chart-title">⚙️ 系统设置</div>
+            <div class="chart-title">系统设置</div>
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;">
                 <div>
                     <h3 style="margin-bottom:15px;color:var(--primary);">告警阈值设置</h3>
@@ -76,19 +66,13 @@
                 <div>
                     <h3 style="margin-bottom:15px;color:var(--primary);">通知设置</h3>
                     <div style="margin-bottom:15px;">
-                        <label style="display:flex;align-items:center;gap:10px;color:var(--text-main);">
-                            <input type="checkbox" checked> 告警邮件通知
-                        </label>
+                        <label style="display:flex;align-items:center;gap:10px;color:var(--text-main);"><input type="checkbox" checked> 告警邮件通知</label>
                     </div>
                     <div style="margin-bottom:15px;">
-                        <label style="display:flex;align-items:center;gap:10px;color:var(--text-main);">
-                            <input type="checkbox" checked> 短信通知
-                        </label>
+                        <label style="display:flex;align-items:center;gap:10px;color:var(--text-main);"><input type="checkbox" checked> 短信通知</label>
                     </div>
                     <div style="margin-bottom:15px;">
-                        <label style="display:flex;align-items:center;gap:10px;color:var(--text-main);">
-                            <input type="checkbox"> 微信通知
-                        </label>
+                        <label style="display:flex;align-items:center;gap:10px;color:var(--text-main);"><input type="checkbox"> 微信通知</label>
                     </div>
                     <button class="nav-btn" onclick="saveNotification()">💾 保存通知</button>
                 </div>
@@ -96,7 +80,7 @@
         </div>
 
         <div class="chart-container full-width">
-            <div class="chart-title">📊 系统信息</div>
+            <div class="chart-title">系统信息</div>
             <div style="padding:20px;">
                 <table class="alert-table" style="max-width:600px;">
                     <tr><td>系统版本</td><td>v2.0</td></tr>
@@ -110,22 +94,22 @@
         </div>
     </div>
 
-    <footer class="footer-bar">
+    <div class="footer-bar">
         <div class="info"><span>RSBIM 储罐结构安全智能监测系统 v2.0</span><span>数据更新: <span id="lastUpdate2"></span></span></div>
         <div class="blink">● 系统运行正常</div>
-    </footer>
+    </div>
 
     <script>
         function updateTime() {
-            const el = document.getElementById('currentTime');
-            if (el) el.textContent = new Date().toLocaleTimeString('zh-CN', {hour12:false});
+            const t = document.getElementById('currentTime');
             const u1 = document.getElementById('lastUpdate');
-            if (u1) u1.textContent = new Date().toLocaleString('zh-CN');
             const u2 = document.getElementById('lastUpdate2');
+            if (t) t.textContent = new Date().toLocaleTimeString('zh-CN', {hour12:false});
+            if (u1) u1.textContent = new Date().toLocaleString('zh-CN');
             if (u2) u2.textContent = new Date().toLocaleTimeString('zh-CN');
         }
         updateTime(); setInterval(updateTime, 1000);
-        
+
         function saveThresholds() { alert('阈值设置已保存'); }
         function saveDataConfig() { alert('数据采集配置已保存'); }
         function saveNotification() { alert('通知设置已保存'); }

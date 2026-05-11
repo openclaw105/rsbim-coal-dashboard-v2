@@ -10,198 +10,102 @@
 <body>
     <div class="particles" id="particles"></div>
 
-    <header class="header">
-        <div class="header-left">
-            <h1 class="header-title"><span class="logo">🏭</span>RSBIM 储罐监测</h1>
-            <nav class="nav-menu">
-                <a href="index.html" class="nav-btn">
-                    <span class="nav-icon">🏠</span>首页
-                </a>
-                <a href="data.html" class="nav-btn active">
-                    <span class="nav-icon">📊</span>综合数据
-                </a>
-                <a href="trends.html" class="nav-btn">
-                    <span class="nav-icon">📈</span>趋势监测
-                </a>
-                <a href="history.html" class="nav-btn">
-                    <span class="nav-icon">📜</span>历史数据
-                </a>
-                <a href="sensors.html" class="nav-btn">
-                    <span class="nav-icon">📡</span>传感器运维
-                </a>
-                <a href="settings.html" class="nav-btn">
-                    <span class="nav-icon">⚙️</span>系统设置
-                </a>
-            </nav>
+    <div class="header">
+        <h1>RSBIM 储罐监测</h1>
+        <div class="meta">
+            <span class="time" id="currentTime"></span>
+            <span class="status"><span class="status-dot online"></span>系统运行正常</span>
         </div>
-        <div class="header-right">
-            <span class="header-time" id="currentTime"></span>
-            <span class="header-status"><span class="status-dot online"></span>系统运行正常</span>
-        </div>
-    </header>
+    </div>
 
     <div class="stats-bar">
-        <div class="stat-card">
-            <div class="label">储罐总数</div>
-            <div class="value">5</div>
-            <div class="unit">座</div>
-        </div>
-        <div class="stat-card">
-            <div class="label">传感器</div>
-            <div class="value">128</div>
-            <div class="unit">个</div>
-        </div>
-        <div class="stat-card">
-            <div class="label">在线率</div>
-            <div class="value">99%</div>
-            <div class="unit">%</div>
-        </div>
-        <div class="stat-card">
-            <div class="label">应变均值</div>
-            <div class="value">12.5</div>
-            <div class="unit">με</div>
-        </div>
-        <div class="stat-card">
-            <div class="label">倾斜均值</div>
-            <div class="value">0.02</div>
-            <div class="unit">°</div>
-        </div>
-        <div class="stat-card">
-            <div class="label">沉降均值</div>
-            <div class="value">8.3</div>
-            <div class="unit">mm</div>
-        </div>
-        <div class="stat-card">
-            <div class="label">温度均值</div>
-            <div class="value">24.8</div>
-            <div class="unit">°C</div>
-        </div>
-        <div class="stat-card">
-            <div class="label">系统状态</div>
-            <div class="value" style="color:var(--accent);font-size:16px;">正常</div>
-            <div class="unit">—</div>
-        </div>
+        <div class="stat-card"><div class="label">储罐总数</div><div class="value">5</div><div class="unit">座</div><div class="trend trend-stable">—</div></div>
+        <div class="stat-card"><div class="label">传感器</div><div class="value">128</div><div class="unit">个</div><div class="trend trend-stable">—</div></div>
+        <div class="stat-card"><div class="label">在线率</div><div class="value">99%</div><div class="unit">%</div><div class="trend trend-down">↑ 2%</div></div>
+        <div class="stat-card"><div class="label">应变均值</div><div class="value">12.5</div><div class="unit">με</div><div class="trend trend-down">↓ 0.3</div></div>
+        <div class="stat-card"><div class="label">倾斜均值</div><div class="value">0.02</div><div class="unit">°</div><div class="trend trend-stable">—</div></div>
+        <div class="stat-card"><div class="label">沉降均值</div><div class="value">8.3</div><div class="unit">mm</div><div class="trend trend-down">↓ 1.2</div></div>
+        <div class="stat-card"><div class="label">温度均值</div><div class="value">24.8</div><div class="unit">°C</div><div class="trend trend-up">↑ 0.5</div></div>
+        <div class="stat-card"><div class="label">系统状态</div><div class="value" style="color:var(--accent);font-size:16px;">正常</div><div class="unit">—</div><div class="trend trend-stable">—</div></div>
     </div>
 
     <div class="main-content">
         <div class="chart-container full-width">
-            <div class="chart-title">📊 储罐数据总览</div>
+            <div class="chart-title">储罐数据总览</div>
             <div class="chart-box large">
                 <table class="alert-table" style="width:100%;">
-                    <thead>
-                        <tr>
-                            <th>储罐编号</th>
-                            <th>类型</th>
-                            <th>容量(m³)</th>
-                            <th>当前液位</th>
-                            <th>应变值</th>
-                            <th>倾斜度</th>
-                            <th>温度</th>
-                            <th>状态</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>储罐编号</th><th>类型</th><th>容量(m³)</th><th>当前液位</th><th>应变值</th><th>倾斜度</th><th>温度</th><th>状态</th></tr></thead>
                     <tbody>
-                        <tr>
-                            <td>TANK-001</td><td>原油储罐</td><td>10,000</td>
-                            <td>7,500 (75%)</td><td>12.5 με</td><td>0.02°</td><td>25.3°C</td>
-                            <td><span class="status-indicator status-normal">正常</span></td>
-                        </tr>
-                        <tr>
-                            <td>TANK-002</td><td>成品油罐</td><td>5,000</td>
-                            <td>3,200 (64%)</td><td>8.3 με</td><td>0.01°</td><td>24.8°C</td>
-                            <td><span class="status-indicator status-normal">正常</span></td>
-                        </tr>
-                        <tr>
-                            <td>TANK-003</td><td>化学品罐</td><td>2,000</td>
-                            <td>1,500 (75%)</td><td>15.2 με</td><td>0.03°</td><td>26.1°C</td>
-                            <td><span class="status-indicator status-normal">正常</span></td>
-                        </tr>
-                        <tr>
-                            <td>TANK-004</td><td>LNG储罐</td><td>3,000</td>
-                            <td>2,100 (70%)</td><td>6.8 με</td><td>0.01°</td><td>-162°C</td>
-                            <td><span class="status-indicator status-normal">正常</span></td>
-                        </tr>
-                        <tr>
-                            <td>TANK-005</td><td>水罐</td><td>8,000</td>
-                            <td>6,400 (80%)</td><td>9.1 με</td><td>0.02°</td><td>22.5°C</td>
-                            <td><span class="status-indicator status-normal">正常</span></td>
-                        </tr>
+                        <tr><td>TANK-001</td><td>原油储罐</td><td>10,000</td><td>7,500 (75%)</td><td>12.5 με</td><td>0.02°</td><td>25.3°C</td><td><span style="color:#00ff88">正常</span></td></tr>
+                        <tr><td>TANK-002</td><td>成品油罐</td><td>5,000</td><td>3,200 (64%)</td><td>8.3 με</td><td>0.01°</td><td>24.8°C</td><td><span style="color:#00ff88">正常</span></td></tr>
+                        <tr><td>TANK-003</td><td>化学品罐</td><td>2,000</td><td>1,500 (75%)</td><td>15.2 με</td><td>0.03°</td><td>26.1°C</td><td><span style="color:#00ff88">正常</span></td></tr>
+                        <tr><td>TANK-004</td><td>LNG储罐</td><td>3,000</td><td>2,100 (70%)</td><td>6.8 με</td><td>0.01°</td><td>-162°C</td><td><span style="color:#00ff88">正常</span></td></tr>
+                        <tr><td>TANK-005</td><td>水罐</td><td>8,000</td><td>6,400 (80%)</td><td>9.1 με</td><td>0.02°</td><td>22.5°C</td><td><span style="color:#00ff88">正常</span></td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
         <div class="chart-container half-width">
-            <div class="chart-title">📈 应变趋势</div>
+            <div class="chart-title">应变趋势</div>
             <div class="chart-box" id="strainChart"></div>
         </div>
 
         <div class="chart-container half-width">
-            <div class="chart-title">📐 倾斜趋势</div>
+            <div class="chart-title">倾斜趋势</div>
             <div class="chart-box" id="tiltChart"></div>
         </div>
 
         <div class="chart-container half-width">
-            <div class="chart-title">🌡️ 温度趋势</div>
+            <div class="chart-title">温度趋势</div>
             <div class="chart-box" id="tempChart"></div>
         </div>
 
         <div class="chart-container half-width">
-            <div class="chart-title">📍 沉降趋势</div>
+            <div class="chart-title">沉降趋势</div>
             <div class="chart-box" id="settleChart"></div>
         </div>
     </div>
 
-    <footer class="footer-bar">
-        <div class="info">
-            <span>RSBIM 储罐结构安全智能监测系统 v2.0</span>
-            <span>数据更新: <span id="lastUpdate"></span></span>
-        </div>
+    <div class="footer-bar">
+        <div class="info"><span>RSBIM 储罐结构安全智能监测系统 v2.0</span><span>数据更新: <span id="lastUpdate"></span></span></div>
         <div class="blink">● 系统运行正常</div>
-    </footer>
+    </div>
 
     <script>
-        const TANKS = [
-            { id: 'TANK-001', name: '1号储罐' },
-            { id: 'TANK-002', name: '2号储罐' },
-            { id: 'TANK-003', name: '3号储罐' },
-            { id: 'TANK-004', name: '4号储罐' },
-            { id: 'TANK-005', name: '5号储罐' }
-        ];
-        
-        const COLORS = { primary: '#00d4ff', accent: '#00ff88', warning: '#ffaa00', danger: '#ff4444', purple: '#a855f7' };
-        
+        const TANKS = [{id:'TANK-001',name:'1号储罐'},{id:'TANK-002',name:'2号储罐'},{id:'TANK-003',name:'3号储罐'},{id:'TANK-004',name:'4号储罐'},{id:'TANK-005',name:'5号储罐'}];
+        const COLORS = {primary:'#00d4ff',accent:'#00ff88',warning:'#ffaa00',danger:'#ff4444',purple:'#a855f7'};
+
         function updateTime() {
-            const el = document.getElementById('currentTime');
-            if (el) el.textContent = new Date().toLocaleTimeString('zh-CN', { hour12: false });
+            const t = document.getElementById('currentTime');
             const u = document.getElementById('lastUpdate');
+            if (t) t.textContent = new Date().toLocaleTimeString('zh-CN', {hour12:false});
             if (u) u.textContent = new Date().toLocaleTimeString('zh-CN');
         }
-        updateTime();
-        setInterval(updateTime, 1000);
-        
-        function createChart(id, title, series) {
+        updateTime(); setInterval(updateTime, 1000);
+
+        function createChart(id, series) {
             const div = document.getElementById(id);
             if (!div) return;
             const chart = echarts.init(div);
             chart.setOption({
-                tooltip: { trigger: 'axis', backgroundColor: 'rgba(0,0,0,0.85)', textStyle: { color: '#fff' } },
-                legend: { data: TANKS.map(t => t.name), top: 30, textStyle: { color: '#fff' } },
-                grid: { left: '3%', right: '4%', bottom: '3%', top: '80px', containLabel: true },
-                xAxis: { type: 'category', boundaryGap: false, data: ['00:00','04:00','08:00','12:00','16:00','20:00','24:00'], axisLine: { lineStyle: { color: '#666' } }, axisLabel: { color: '#aaa' } },
-                yAxis: { type: 'value', axisLine: { lineStyle: { color: '#666' } }, axisLabel: { color: '#aaa' }, splitLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } } },
-                series: series.map((s, i) => ({ name: s.name, type: 'line', smooth: true, data: s.data, lineStyle: { width: 2 }, itemStyle: { color: COLORS[i] || COLORS.primary } }))
+                tooltip: {trigger:'axis',backgroundColor:'rgba(0,0,0,0.85)',textStyle:{color:'#fff'}},
+                legend: {data:TANKS.map(t=>t.name),top:30,textStyle:{color:'#fff'}},
+                grid: {left:'3%',right:'4%',bottom:'3%',top:'80px',containLabel:true},
+                xAxis: {type:'category',boundaryGap:false,data:['00:00','04:00','08:00','12:00','16:00','20:00','24:00'],axisLine:{lineStyle:{color:'#666'}},axisLabel:{color:'#aaa'}},
+                yAxis: {type:'value',axisLine:{lineStyle:{color:'#666'}},axisLabel:{color:'#aaa'},splitLine:{lineStyle:{color:'rgba(255,255,255,0.1)'}}},
+                series: series.map((s,i) => ({name:s.name,type:'line',smooth:true,data:s.data,lineStyle:{width:2},itemStyle:{color:COLORS[i]||COLORS.primary}}))
             });
             return chart;
         }
-        
+
         const charts = [
-            createChart('strainChart', '应变', TANKS.map((t, i) => ({ name: t.name, data: Array.from({length:7}, () => Math.random()*20+5) }))),
-            createChart('tiltChart', '倾斜', TANKS.map((t, i) => ({ name: t.name, data: Array.from({length:7}, () => Math.random()*0.05+0.01) }))),
-            createChart('tempChart', '温度', TANKS.map((t, i) => ({ name: t.name, data: Array.from({length:7}, () => Math.random()*10+20) }))),
-            createChart('settleChart', '沉降', TANKS.map((t, i) => ({ name: t.name, data: Array.from({length:7}, () => Math.random()*20+5) })))
+            createChart('strainChart', TANKS.map((t,i) => ({name:t.name,data:Array.from({length:7},()=>Math.random()*20+5)}))),
+            createChart('tiltChart', TANKS.map((t,i) => ({name:t.name,data:Array.from({length:7},()=>Math.random()*0.05+0.01)}))),
+            createChart('tempChart', TANKS.map((t,i) => ({name:t.name,data:Array.from({length:7},()=>Math.random()*10+20)}))),
+            createChart('settleChart', TANKS.map((t,i) => ({name:t.name,data:Array.from({length:7},()=>Math.random()*20+5)})))
         ];
-        
+
         window.addEventListener('resize', () => charts.forEach(c => c && c.resize()));
     </script>
 </body>
