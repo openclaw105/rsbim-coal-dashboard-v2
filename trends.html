@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>趋势监测 - RSBIM 储罐监测</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="particles" id="particles"></div>
+
+  <nav class="navbar">
+    <div class="navbar-title">
+      <span class="logo">🏭</span>
+      RSBIM 储罐监测
+    </div>
+    <a href="index.html" class="nav-btn">
+      <span class="nav-icon">🏠</span>首页
+    </a>
+    <a href="data.html" class="nav-btn">
+      <span class="nav-icon">📊</span>综合数据
+    </a>
+    <a href="trends.html" class="nav-btn active">
+      <span class="nav-icon">📈</span>趋势监测
+    </a>
+    <a href="history.html" class="nav-btn">
+      <span class="nav-icon">📜</span>历史数据
+    </a>
+    <a href="sensors.html" class="nav-btn">
+      <span class="nav-icon">📡</span>传感器运维
+    </a>
+    <a href="settings.html" class="nav-btn">
+      <span class="nav-icon">⚙️</span>系统设置
+    </a>
+  </nav>
+
+  <div class="page-container">
+    <div class="card">
+      <h2>📈 应变趋势监测</h2>
+      <div class="chart-container" id="strain-chart"></div>
+    </div>
+
+    <div class="card">
+      <h2>📐 倾斜趋势监测</h2>
+      <div class="chart-container" id="tilt-chart"></div>
+    </div>
+
+    <div class="card">
+      <h2>🌡️ 温度趋势监测</h2>
+      <div class="chart-container" id="temp-chart"></div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <span>RSBIM 储罐结构安全智能监测系统 v2.0</span>
+    <span class="blink">● 系统运行正常</span>
+  </footer>
+
+  <script src="echarts.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

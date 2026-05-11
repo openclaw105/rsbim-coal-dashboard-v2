@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>传感器运维 - RSBIM 储罐监测</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="particles" id="particles"></div>
+
+  <nav class="navbar">
+    <div class="navbar-title">
+      <span class="logo">🏭</span>
+      RSBIM 储罐监测
+    </div>
+    <a href="index.html" class="nav-btn">
+      <span class="nav-icon">🏠</span>首页
+    </a>
+    <a href="data.html" class="nav-btn">
+      <span class="nav-icon">📊</span>综合数据
+    </a>
+    <a href="trends.html" class="nav-btn">
+      <span class="nav-icon">📈</span>趋势监测
+    </a>
+    <a href="history.html" class="nav-btn">
+      <span class="nav-icon">📜</span>历史数据
+    </a>
+    <a href="sensors.html" class="nav-btn active">
+      <span class="nav-icon">📡</span>传感器运维
+    </a>
+    <a href="settings.html" class="nav-btn">
+      <span class="nav-icon">⚙️</span>系统设置
+    </a>
+  </nav>
+
+  <div class="page-container">
+    <div class="card">
+      <h2>📡 传感器运维管理</h2>
+      <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+        <button class="btn btn-primary" onclick="refreshSensors()">刷新</button>
+        <button class="btn" onclick="addSensor()">添加传感器</button>
+        <button class="btn" onclick="exportSensors()">导出列表</button>
+      </div>
+
+      <div class="chart-container" id="sensor-map" style="height: 300px;"></div>
+    </div>
+
+    <div class="card">
+      <h2>📋 传感器列表</h2>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>传感器编号</th>
+            <th>类型</th>
+            <th>安装位置</th>
+            <th>当前值</th>
+            <th>阈值</th>
+            <th>状态</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="sensors-table-body">
+          <!-- 数据由 JS 动态加载 -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <span>RSBIM 储罐结构安全智能监测系统 v2.0</span>
+    <span class="blink">● 系统运行正常</span>
+  </footer>
+
+  <script src="echarts.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
